@@ -2,14 +2,14 @@
 
 # IET-OU / moodle-backup-parser
 
-Parse files within a [Moodle][] course backup 'MBZ' archive.
+Parse files within a [Moodle][] course backup `MBZ` archive.
 
 * <https://docs.moodle.org/29/en/Course_backup>
 
 Initial limitations:
 
-* 'MBZ' archive file needs to be unzipped already.
-* Expecting the 'new' backup format ('.tar.gz' as opposed to '.zip')
+* `MBZ` archive file needs to be unzipped already;
+* Expecting the '_new_' backup format (`.tar.gz` as opposed to ``.zip`)
 * Test source is Moodle 2.9.3 (`Learn3.open.ac.uk`)
 
 
@@ -23,9 +23,23 @@ Install and test using Git and [Composer][],
     composer test
 ```
 
+## Example
+
+```php
+<?php
+    require_once './moodle-backup-parser/vendor/autoload.php';
+
+    $parser = new \Nfreear\MoodleBackupParser\Parser();
+    $dumper = new \Nfreear\MoodleBackupParser\StaticPages();
+
+    $result = $parser->parse('./backup');
+
+    $result = $dumper->putContents('./static_pages', $parser->getPages());
+```
+
 
 ---
-© 2016 [The Open University][ou]. ([Institute of Educational Technology][iet])
+© 2016 [The Open University][ou] ([Institute of Educational Technology][iet]).
 
 
 [travis-icon]: https://travis-ci.org/IET-OU/moodle-backup-parser.svg
