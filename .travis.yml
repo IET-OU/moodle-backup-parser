@@ -1,0 +1,21 @@
+language: php
+php:
+  #- 5.6
+  - 5.4
+
+git:
+  depth: 5
+
+install:
+  - composer self-update
+  - composer install
+
+script:
+  - composer validate --no-interaction
+  - composer test
+
+after_script:
+  - composer --version
+  - git --version
+
+#End.

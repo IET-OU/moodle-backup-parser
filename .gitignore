@@ -1,0 +1,6 @@
+
+composer.lock
+vendor
+bin
+tests/**/*.htm
+*BAK*
