@@ -1,5 +1,5 @@
 {
-    "name": "IET-OU/moodle-backup-parser",
+    "name": "iet-ou/moodle-backup-parser",
     "description": "Parse Moodle backup MBZ archives. Developed for OU-APPLAuD. ©2016 The Open University, UK (IET).",
     "homepage": "https://docs.moodle.org/29/en/Course_backup",
     "keywords": [ "Moodle", "archive", "zip", "course", "VLE", "OpenUniversity", "IET-OU" ],

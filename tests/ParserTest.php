@@ -14,43 +14,40 @@ error_reporting(E_ALL);
 
 use \Nfreear\MoodleBackupParser;
 
-#use \IET_OU\Open_Media_Player\Gitlib;
-#use \IET_OU\Open_Media_Player\Test\Extend\PHPUnit_TestCase_Extended;
-
 define('TEST_INPUT_DIR', __DIR__ . '/../../backup');
 define('TEST_OUTPUT_DIR', __DIR__ . '/output/static-pages');
 
 class ParserTest extends \PHPUnit_Framework_TestCase
 {
-    const INPUT_DIR  = '/../../backup';
-    const OUTPUT_DIR = '/output/static-pages';
-
     protected $parser;
+    protected $verbose = false;
 
     public function setup()
     {
-        printf("setup parser. %s\n", '');
+        // Arrange
+        printf("Setup moodle-backup-parser. %s\n", '');
         $this->parser = new \Nfreear\MoodleBackupParser\Parser();
     }
 
     public function testParse()
     {
         // Arrange
-        #$parser = new \Nfreear\MoodleBackupParser\MoodleBackupParser();
-        #$dumper = new \Nfreear\MoodleBackupParser\StaticPages();
 
         // Act
-        $result = $this->parser->parse(TEST_INPUT_DIR, './static_pages', [
+        $result = $this->parser->parse(TEST_INPUT_DIR, [
             'modulename' => 'page',
             'title' => 'Is APPLAuD for me?',
         ]);
         $metadata = $this->parser->getMetaData();
 
+        if ($this->verbose) {
+            var_dump('Meta-data: ', $metadata);
+        } else {
+            printf("Backup name:  %s\n", $metadata->name);
+            printf("Count activities:  %s\n", $metadata->count_activities);
+        }
+
         // Asserts
-
-        //var_dump('Meta-data: ', $parser->getMetaData());
-        var_dump('count pages:', count($this->parser->getPages()));
-
         $this->assertEquals('course', $metadata->backup_type, 'backup_type');
         $this->assertEquals('moodle2', $metadata->backup_format, 'backup_format');
         $this->assertEquals('studyplan', $metadata->course_format, 'course_format');
@@ -62,12 +59,14 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
     public function testStaticPages()
     {
-        #$parser = new \Nfreear\MoodleBackupParser\MoodleBackupParser();
+        // Arrange
         $dumper = new \Nfreear\MoodleBackupParser\StaticPages();
 
         $this->parser->parse(TEST_INPUT_DIR);
         $pages = $this->parser->getPages();
         $result = $dumper->putContents(TEST_OUTPUT_DIR, $pages);
+
+        printf("Count pages:  %s\n", count($pages));
 
         $this->assertCount(35, $pages, 'pages_count');
         $this->assertFileExists(TEST_OUTPUT_DIR . '/index.htm');

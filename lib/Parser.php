@@ -5,11 +5,6 @@
  *
  * Parse files within a Moodle course backup 'MBZ' archive.
  *
- * Initial limitations:
- *  - 'MBZ' archive file needs to be unzipped already.
- *  - Expecting the 'new' backup format ('.tar.gz' as opposed to '.zip')
- *  - Test source is Moodle 2.9.3 (Learn3.open.ac.uk)
- *
  * @copyright Nick Freear, 20 April 2016.
  * @copyright Copyright 2016 The Open University.
  * @link  https://docs.moodle.org/27/en/Backup_and_restore_FAQ#Using_the_new_backup_format_.28experimental.29
@@ -23,16 +18,15 @@ class Parser
     const ROOT_XML_FILE = 'moodle_backup.xml';
 
     protected $input_dir;
-    protected $output_dir;
     protected $xmlo_root;
     protected $first_ordered;
     protected $metadata;
     protected $pages = [];
+    protected $verbose = false;
 
-    public function parse($input_dir, $output_dir = null, $first_ordered = null)
+    public function parse($input_dir, $first_ordered = null)
     {
         $this->input_dir = (string) $input_dir;
-        $this->output_dir = (string) $output_dir;
         $this->first_ordered = (object) $first_ordered;
 
         $xml_path = $input_dir . '/' . self::ROOT_XML_FILE;
@@ -58,7 +52,6 @@ class Parser
             'backup_type' => (string) $info->details->detail->type,  # 'course'
             'backup_format' => (string) $info->details->detail->format,
         ];
-        #var_dump($this->metadata);
 
         return $this->parseActivities();
     }
@@ -77,7 +70,6 @@ class Parser
     {
         $activities = $this->xmlo_root->information->contents->activities->activity;
         $this->metadata->count_activities = $activities->count();
-        #var_dump('Count activities: ', $activities->count());
         foreach ($activities as $act) {
             $modulename = (string) $act->modulename;
             /*if ($act->title === $this->first_ordered->title) {
@@ -86,11 +78,11 @@ class Parser
             switch ($modulename) {
                 case 'page':
                     $this->parsePage($this->input_dir . '/' . (string) $act->directory);
-
-                    //return;
                     break;
                 default:
-                    //var_dump('Pass. Module not currently supported:', (string) $act->directory);
+                    if ($this->verbose) {
+                        printf("Pass. Module not currently supported: %s\n", (string) $act->directory);
+                    }
                     break;
             }
         }
@@ -117,7 +109,6 @@ class Parser
             'links' => $this->pageLinks((string) $xmlo->content),
         ];
         $this->pages[] = $page;
-        //var_dump('PAGE:', $xml_path, $page);
     }
 
     protected function pageLinks($content)
