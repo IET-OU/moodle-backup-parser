@@ -15,7 +15,8 @@
 
 class Parser
 {
-    const ROOT_XML_FILE = 'moodle_backup.xml';
+    const ROOT_XML_FILE = '/moodle_backup.xml';
+    const FILES_XML_FILE= '/files.xml';
 
     protected $input_dir;
     protected $xmlo_root;
@@ -29,7 +30,7 @@ class Parser
         $this->input_dir = (string) $input_dir;
         $this->first_ordered = (object) $first_ordered;
 
-        $xml_path = $input_dir . '/' . self::ROOT_XML_FILE;
+        $xml_path = $input_dir . self::ROOT_XML_FILE;
         $this->xmlo_root = simplexml_load_file($xml_path);
 
         if (! $this->xmlo_root) {
@@ -41,8 +42,10 @@ class Parser
         $this->metadata = (object) [
             'name' => (string) $info->name,
             'moodle_release' => (string) $info->moodle_release,
+            'backup_release' => (string) $info->backup_release,
             'backup_date' => date('c', (int) $info->backup_date), # Unix timestamp;
             'wwwroot'     => (string) $info->original_wwwroot,
+            'site_id'     => (string) $info->original_site_identifier_hash,
             'course_id'   => (int) $info->original_course_id,
             'course_format' => (string) $info->original_course_format,
             'course_fullname' => (string) trim($info->original_course_fullname),

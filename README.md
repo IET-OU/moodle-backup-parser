@@ -2,7 +2,7 @@
 
 # IET-OU / moodle-backup-parser
 
-Parse files within a [Moodle][] course backup `MBZ` archive.
+PHP library to parse files within a [Moodle][] course backup `MBZ` archive.
 
 * <https://docs.moodle.org/29/en/Course_backup>
 
@@ -35,6 +35,8 @@ Install and test using Git and [Composer][],
     $result = $parser->parse('./backup');
 
     $result = $dumper->putContents('./static_pages', $parser->getPages());
+
+    printf("End. Parsed:  %s\n", $parser->getMetaData()->name);
 ```
 
 
@@ -43,7 +45,7 @@ Install and test using Git and [Composer][],
 
 
 [travis-icon]: https://travis-ci.org/IET-OU/moodle-backup-parser.svg
-[travis-ci]: https://travis-ci.org/IET-OU/moodle-backup-parser
+[travis-ci]: https://travis-ci.org/IET-OU/moodle-backup-parser "Build status – Travis-CI"
 [Moodle]: https://moodle.org/
 [Composer]: https://getcomposer.org/
 [iet]: http://iet.open.ac.uk/
