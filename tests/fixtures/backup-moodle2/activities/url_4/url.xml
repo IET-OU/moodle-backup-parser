@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activity id="1" moduleid="4" modulename="url" contextid="34">
+  <url id="1">
+    <name>What people say about Lorem Ipsum</name>
+    <intro>&lt;p&gt;People are say loads of positive things about Lorem Ipsum!&lt;/p&gt;&lt;p&gt;Go watch the video.&lt;/p&gt;</intro>
+    <introformat>1</introformat>
+    <externalurl>https://youtube.com/watch?v=af2wLahd8WM</externalurl>
+    <display>1</display>
+    <displayoptions>a:1:{s:10:"printintro";i:1;}</displayoptions>
+    <parameters>a:0:{}</parameters>
+    <timemodified>1461362355</timemodified>
+  </url>
+</activity>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activity id="2" moduleid="9" modulename="url" contextid="43">
+  <url id="2">
+    <name>Supporting Lorem Ipsum</name>
+    <intro>&lt;p&gt;URL description...&lt;/p&gt;</intro>
+    <introformat>1</introformat>
+    <externalurl>https://www.google.co.uk/search?q=lorem+ipsum</externalurl>
+    <display>0</display>
+    <displayoptions>a:1:{s:10:"printintro";i:1;}</displayoptions>
+    <parameters>a:0:{}</parameters>
+    <timemodified>1461418459</timemodified>
+  </url>
+</activity>

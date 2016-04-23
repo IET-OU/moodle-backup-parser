@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<block id="22" contextid="29" version="2015051100">
+  <blockname>recent_activity</blockname>
+  <parentcontextid>25</parentcontextid>
+  <showinsubcontexts>0</showinsubcontexts>
+  <pagetypepattern>course-view-*</pagetypepattern>
+  <subpagepattern>$@NULL@$</subpagepattern>
+  <defaultregion>side-post</defaultregion>
+  <defaultweight>3</defaultweight>
+  <configdata></configdata>
+  <block_positions>
+    <block_position id="2">
+      <contextid>25</contextid>
+      <pagetype>course-view-topics</pagetype>
+      <subpage></subpage>
+      <visible>1</visible>
+      <region>side-post</region>
+      <weight>4</weight>
+    </block_position>
+  </block_positions>
+</block>

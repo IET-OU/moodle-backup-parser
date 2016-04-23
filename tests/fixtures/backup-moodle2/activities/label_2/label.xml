@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activity id="1" moduleid="2" modulename="label" contextid="32">
+  <label id="1">
+    <name>Welcome to the Lorem Ipsum course. This is a topic...</name>
+    <intro>&lt;p&gt;Welcome to the Lorem Ipsum course. This is a topic-based course, with four topics.&lt;/p&gt;&lt;p&gt;And more text. And more... Enjoy!&lt;/p&gt;</intro>
+    <introformat>1</introformat>
+    <timemodified>1461361955</timemodified>
+  </label>
+</activity>

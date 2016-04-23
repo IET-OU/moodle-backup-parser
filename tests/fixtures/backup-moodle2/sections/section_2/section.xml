@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="2">
+  <number>1</number>
+  <name>Topic 1: Welcome</name>
+  <summary></summary>
+  <summaryformat>1</summaryformat>
+  <sequence>2,3,4,5</sequence>
+  <visible>1</visible>
+  <availabilityjson>$@NULL@$</availabilityjson>
+</section>

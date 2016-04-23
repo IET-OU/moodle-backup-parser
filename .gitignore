@@ -4,3 +4,5 @@ vendor
 bin
 tests/**/*.htm
 *BAK*
+coverage.clover
+*.gz*

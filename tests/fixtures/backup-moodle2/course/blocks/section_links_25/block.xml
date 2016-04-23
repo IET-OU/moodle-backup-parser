@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<block id="25" contextid="41" version="2015051100">
+  <blockname>section_links</blockname>
+  <parentcontextid>25</parentcontextid>
+  <showinsubcontexts>0</showinsubcontexts>
+  <pagetypepattern>course-view-*</pagetypepattern>
+  <subpagepattern>$@NULL@$</subpagepattern>
+  <defaultregion>side-pre</defaultregion>
+  <defaultweight>2</defaultweight>
+  <configdata></configdata>
+  <block_positions>
+  </block_positions>
+</block>

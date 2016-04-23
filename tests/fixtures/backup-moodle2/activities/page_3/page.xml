@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activity id="1" moduleid="3" modulename="page" contextid="33">
+  <page id="1">
+    <name>Is Lorem Ipsum for me?</name>
+    <intro>My page description ...</intro>
+    <introformat>1</introformat>
+    <content>&lt;p&gt;Lorem ipsum dolor sit amet, mel summo epicuri an, quo doctus nonumes ex. Et alii ignota abhorreant vix. Ea albucius qualisque hendrerit duo. Vis ea feugiat dolorum definitiones, vis discere delicatissimi et.&lt;/p&gt;&lt;p&gt;At vim nonumy maluisset referrentur. Nusquam democritum duo no. At cum dignissim voluptaria, cu enim aeterno vis. Ad posse eleifend cum. Ad sint iisque reformidans sit.&lt;/p&gt;&lt;p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href="$@URLVIEWBYID*4@$"&gt;What people say about Lorem Ipsum&lt;/a&gt;;&lt;br&gt;&lt;/li&gt;&lt;li&gt;&lt;a href="$@FOLDERVIEWBYID*6@$"&gt;The Lorem Ipsum principles&lt;/a&gt;;&lt;br&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;</content>
+    <contentformat>1</contentformat>
+    <legacyfiles>0</legacyfiles>
+    <legacyfileslast>$@NULL@$</legacyfileslast>
+    <display>5</display>
+    <displayoptions>a:2:{s:12:"printheading";s:1:"1";s:10:"printintro";s:1:"1";}</displayoptions>
+    <revision>2</revision>
+    <timemodified>1461362970</timemodified>
+  </page>
+</activity>

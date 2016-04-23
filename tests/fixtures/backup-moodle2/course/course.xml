@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<course id="2" contextid="25">
+  <shortname>LOREM2016</shortname>
+  <fullname>Lorem Ipsum</fullname>
+  <idnumber></idnumber>
+  <summary>&lt;p&gt;This is a test course, to test course backups.&lt;/p&gt;</summary>
+  <summaryformat>1</summaryformat>
+  <format>topics</format>
+  <showgrades>1</showgrades>
+  <newsitems>4</newsitems>
+  <startdate>1461366000</startdate>
+  <marker>0</marker>
+  <maxbytes>5242880</maxbytes>
+  <legacyfiles>0</legacyfiles>
+  <showreports>0</showreports>
+  <visible>1</visible>
+  <groupmode>0</groupmode>
+  <groupmodeforce>0</groupmodeforce>
+  <defaultgroupingid>0</defaultgroupingid>
+  <lang></lang>
+  <theme></theme>
+  <timecreated>1461355788</timecreated>
+  <timemodified>1461355788</timemodified>
+  <requested>0</requested>
+  <enablecompletion>0</enablecompletion>
+  <completionnotify>0</completionnotify>
+  <numsections>4</numsections>
+  <hiddensections>0</hiddensections>
+  <coursedisplay>0</coursedisplay>
+  <category id="2">
+    <name>Test</name>
+    <description></description>
+  </category>
+  <tags>
+  </tags>
+</course>

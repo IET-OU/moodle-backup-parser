@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files>
+  <file id="11">
+    <contenthash>3bd084415126ac274b1ee27519d3e5dcdccf6dd4</contenthash>
+    <contextid>36</contextid>
+    <component>mod_folder</component>
+    <filearea>content</filearea>
+    <itemid>0</itemid>
+    <filepath>/</filepath>
+    <filename>Lorem-Ipsum.docx</filename>
+    <userid>2</userid>
+    <filesize>4842</filesize>
+    <mimetype>application/vnd.openxmlformats-officedocument.wordprocessingml.document</mimetype>
+    <status>0</status>
+    <timecreated>1461362798</timecreated>
+    <timemodified>1461362807</timemodified>
+    <source>Lorem-Ipsum.docx</source>
+    <author>Admin User</author>
+    <license>allrightsreserved</license>
+    <sortorder>0</sortorder>
+    <repositorytype>$@NULL@$</repositorytype>
+    <repositoryid>$@NULL@$</repositoryid>
+    <reference>$@NULL@$</reference>
+  </file>
+  <file id="12">
+    <contenthash>da39a3ee5e6b4b0d3255bfef95601890afd80709</contenthash>
+    <contextid>36</contextid>
+    <component>mod_folder</component>
+    <filearea>content</filearea>
+    <itemid>0</itemid>
+    <filepath>/</filepath>
+    <filename>.</filename>
+    <userid>2</userid>
+    <filesize>0</filesize>
+    <mimetype>$@NULL@$</mimetype>
+    <status>0</status>
+    <timecreated>1461362798</timecreated>
+    <timemodified>1461362807</timemodified>
+    <source>$@NULL@$</source>
+    <author>$@NULL@$</author>
+    <license>$@NULL@$</license>
+    <sortorder>0</sortorder>
+    <repositorytype>$@NULL@$</repositorytype>
+    <repositoryid>$@NULL@$</repositoryid>
+    <reference>$@NULL@$</reference>
+  </file>
+  <file id="13">
+    <contenthash>9dbfe5830320a574ed54b47223fde5333f44bc21</contenthash>
+    <contextid>36</contextid>
+    <component>mod_folder</component>
+    <filearea>content</filearea>
+    <itemid>0</itemid>
+    <filepath>/</filepath>
+    <filename>Lorem-Ipsum.pdf</filename>
+    <userid>2</userid>
+    <filesize>43206</filesize>
+    <mimetype>application/pdf</mimetype>
+    <status>0</status>
+    <timecreated>1461362804</timecreated>
+    <timemodified>1461362807</timemodified>
+    <source>Lorem-Ipsum.pdf</source>
+    <author>Admin User</author>
+    <license>allrightsreserved</license>
+    <sortorder>0</sortorder>
+    <repositorytype>$@NULL@$</repositorytype>
+    <repositoryid>$@NULL@$</repositoryid>
+    <reference>$@NULL@$</reference>
+  </file>
+</files>
