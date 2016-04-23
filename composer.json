@@ -32,13 +32,21 @@
       }
     },
     "scripts": {
-      "phpunit": "phpunit",
       "test": [
         "composer validate --no-interaction",
         "./vendor/bin/parallel-lint --exclude vendor .",
         "phpcs --version",
         "phpcs --standard=PSR2 -n --encoding=utf-8 --extensions=php lib/* tests/* && echo OK",
-        "# phpunit"
+        "phpunit"
+      ],
+      "gunzip": [
+        "file tests/fixtures/backup-moodle2-course-2-lorem2016--nu.mbz",
+        "# cp -n tests/fixtures/backup-moodle2-course-2-lorem2016--nu.mbz tests/fixtures/backup-moodle2--nu.mbz.gz",
+        "# gunzip tests/fixtures/backup-moodle2--nu.mbz.gz tests/fixtures/backup-moodle2/"
+      ],
+      "teardown": [
+        "rm -rf tests/output/static-pages/*",
+        "git checkout tests/output/static-pages"
       ],
       "fix": [
         "phpcbf --standard=PSR2 -n --encoding=utf-8 --extensions=php lib/*"

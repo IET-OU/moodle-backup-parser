@@ -15,7 +15,7 @@ error_reporting(E_ALL);
 use \Nfreear\MoodleBackupParser\Parser;
 use \Nfreear\MoodleBackupParser\StaticPages;
 
-define('TEST_INPUT_DIR', __DIR__ . '/../../backup');
+define('TEST_INPUT_DIR', __DIR__ . '/fixtures/backup-moodle2');
 define('TEST_OUTPUT_DIR', __DIR__ . '/output/static-pages');
 
 class ParserTest extends \PHPUnit_Framework_TestCase
@@ -51,13 +51,14 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         // Asserts
         $this->assertEquals('course', $metadata->backup_type, 'backup_type');
         $this->assertEquals('moodle2', $metadata->backup_format, 'backup_format');
-        $this->assertEquals('studyplan', $metadata->course_format, 'course_format');
+        $this->assertRegExp('/^backup-moodle2-course-\d+-\w+-\d{8}-\d+-nu\.mbz$/', $metadata->name, 'name');
+        $this->assertRegExp('/^(topics|studyplan)$/', $metadata->course_format, 'course_format');
         $this->assertRegExp('/^https?:\/\/\w+/', $metadata->wwwroot, 'wwwroot');
-        $this->assertRegExp('/^2\.9\.\d+ \(Build: 201/', $metadata->moodle_release, 'moodle_release');
+        $this->assertRegExp('/^2\.9\.\d+\+? \(Build: 201/', $metadata->moodle_release, 'moodle_release');
         $this->assertRegExp('/^[\da-f]{32}$/', $metadata->backup_id, 'backup_id');
         $this->assertRegExp('/^201\d-\d{2}-\d{2}T../', $metadata->backup_date, 'backup_date');
-        $this->assertGreaterThan(66, $metadata->count_activities, 'count_activities'); # 67;
-        $this->assertGreaterThan(9999, $metadata->course_id); # 300638;
+        $this->assertGreaterThan(6, $metadata->count_activities, 'count_activities'); # 67;
+        $this->assertGreaterThan(1, $metadata->course_id); # 300638;
         $this->assertFileExists(TEST_INPUT_DIR . Parser::ROOT_XML_FILE);
         $this->assertFileExists(TEST_INPUT_DIR . Parser::FILES_XML_FILE);
     }
@@ -73,14 +74,14 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
         printf("Count pages:  %s\n", count($pages));
 
-        $this->assertCount(35, $pages, 'pages_count');
+        $this->assertGreaterThan(1, count($pages), 'pages_count');  # 35;
         $this->assertFileExists(TEST_OUTPUT_DIR . '/index.htm');
-        $this->assertFileExists(TEST_OUTPUT_DIR . '/is-applaud-for-me.htm');
+        $this->assertFileExists(TEST_OUTPUT_DIR . '/is-lorem-ipsum-for-me.htm'); # '/is-applaud-for-me.htm'
 
-        $html = file_get_contents(TEST_OUTPUT_DIR . '/is-applaud-for-me.htm');
+        $html = file_get_contents(TEST_OUTPUT_DIR . '/is-lorem-ipsum-for-me.htm');
 
         $this->assertStringStartsWith('[viewBag]', $html);
-        $this->assertRegExp('/url = "\/is-applaud-for-me.htm"/', $html);
+        $this->assertRegExp('/url = "\/[\w\-]+.htm"/', $html);
         $this->assertRegExp('/<p>/', $html);
     }
 }

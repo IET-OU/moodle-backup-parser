@@ -12,6 +12,9 @@ Initial limitations:
 * Expecting the '_new_' backup format (`.tar.gz` as opposed to ``.zip`)
 * Test source is Moodle 2.9.3 (`Learn3.open.ac.uk`)
 
+## Todos
+
+* See [this list][todos].
 
 ## Installation
 

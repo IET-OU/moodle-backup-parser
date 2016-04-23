@@ -6,6 +6,8 @@
  * @copyright Nick Freear, 20 April 2016.
  */
 
+use \Nfreear\MoodleBackupParser\Clean;
+
 class StaticPages
 {
     protected $output_dir;
@@ -72,7 +74,7 @@ EOT;
         return strtr($template, [
             '%title'=> $page->name,
             '%url'  => '/' . $page->filename . '.htm',
-            '%html' => $this->clean($content),
+            '%html' => Clean::html($content),
             '%json' => json_encode($page, JSON_PRETTY_PRINT),
         ]);
     }
@@ -80,10 +82,5 @@ EOT;
     protected function expandLinks($page)
     {
         //TODO: E.g. is-applaud-for-me.htm
-    }
-
-    protected function clean($content)
-    {
-        return preg_replace('/style="[^"]*"/', '', $content);
     }
 }

@@ -12,10 +12,13 @@
  * @link  https://github.com/IET-OU/nnco/blob/master/themes/nnco/content/static-pages/about.htm
  */
 
+use \Nfreear\MoodleBackupParser\Clean;
 
 class Parser
 {
+    const INDEX_FILE    = '/.ARCHIVE_INDEX';
     const ROOT_XML_FILE = '/moodle_backup.xml';
+    const COURSE_XML_FILE = '/course/course.xml';
     const FILES_XML_FILE= '/files.xml';
 
     protected $input_dir;
@@ -102,7 +105,7 @@ class Parser
             'id' => (int) $xmlo[ 'id' ],
             'moduleid' => $modid,
             'name' => (string) $xmlo->name,
-            'filename' => $this->safeFilename((string) $xmlo->name),
+            'filename' => Clean::filename((string) $xmlo->name),
             'intro' => (string) $xmlo->intro,
             'content' => (string) html_entity_decode($xmlo->content),
             'contentformat' => (int) $xmlo->contentformat,
@@ -121,14 +124,5 @@ class Parser
             $links[ $matches[ 0 ]] = $matches[ 'id' ];
         }
         return $links;
-    }
-
-    protected function safeFilename($name)
-    {
-        $filename = str_replace('  -  ', '-', strtolower(trim($name)));
-        $filename = str_replace(' - ', '-', $filename);
-        $filename = str_replace(' ', '-', $filename);
-        $filename = preg_replace('/[^\w\-]/', '', $filename);
-        return $filename;
     }
 }
