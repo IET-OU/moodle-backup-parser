@@ -6,15 +6,20 @@ PHP library to parse files within a [Moodle][] course backup `MBZ` archive.
 
 * <https://docs.moodle.org/29/en/Course_backup>
 
+_NOTE: this is not a plugin for Moodle! It is a standalone library._
+
+## Status
+
+_License — to be confirmed!_
+
+_This library is a work-in-progress! though with working unit tests!_
+
 Initial limitations:
 
 * `MBZ` archive file needs to be unzipped already;
-* Expecting the '_new_' backup format (`.tar.gz` as opposed to ``.zip`)
-* Test source is Moodle 2.9.3 (`Learn3.open.ac.uk`)
-
-## Todos
-
-* See [this list][todos].
+* Expecting the '_newer_' backup format (`.tar.gz` as opposed to ``.zip`)
+* Test source is Moodle _2.9.3—2.9.5_ (`Learn3.open.ac.uk`)
+* See [todo list][todos].
 
 ## Installation
 
@@ -50,6 +55,7 @@ Install and test using Git and [Composer][],
 [travis-icon]: https://travis-ci.org/IET-OU/moodle-backup-parser.svg
 [travis-ci]: https://travis-ci.org/IET-OU/moodle-backup-parser "Build status – Travis-CI"
 [Moodle]: https://moodle.org/
+[todos]: https://github.com/IET-OU/moodle-backup-parser/issues/1#issue-150009370
 [Composer]: https://getcomposer.org/
 [iet]: http://iet.open.ac.uk/
 [ou]: http://www.open.ac.uk/
