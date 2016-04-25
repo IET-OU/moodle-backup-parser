@@ -14,11 +14,12 @@ error_reporting(E_ALL);
 
 use \Nfreear\MoodleBackupParser\Parser;
 use \Nfreear\MoodleBackupParser\StaticPages;
+use \Nfreear\MoodleBackupParser\Test\Extend\TestCaseExtended;
 
 define('TEST_INPUT_DIR', __DIR__ . '/fixtures/backup-moodle2');
 define('TEST_OUTPUT_DIR', __DIR__ . '/output/static-pages');
 
-class ParserTest extends \PHPUnit_Framework_TestCase
+class ParserTest extends TestCaseExtended
 {
     protected $parser;
     protected $verbose = false;
@@ -51,12 +52,12 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         // Asserts
         $this->assertEquals('course', $metadata->backup_type, 'backup_type');
         $this->assertEquals('moodle2', $metadata->backup_format, 'backup_format');
-        $this->assertRegExp('/^backup-moodle2-course-\d+-\w+-\d{8}-\d+-nu\.mbz$/', $metadata->name, 'name');
+        $this->assertRegExp(Parser::MBZ_FILE_REGEX, $metadata->name, 'name');
         $this->assertRegExp('/^(topics|studyplan)$/', $metadata->course_format, 'course_format');
-        $this->assertRegExp('/^https?:\/\/\w+/', $metadata->wwwroot, 'wwwroot');
-        $this->assertRegExp('/^2\.9\.\d+\+? \(Build: 201/', $metadata->moodle_release, 'moodle_release');
-        $this->assertRegExp('/^[\da-f]{32}$/', $metadata->backup_id, 'backup_id');
-        $this->assertRegExp('/^201\d-\d{2}-\d{2}T../', $metadata->backup_date, 'backup_date');
+        $this->assertUrlLike(null, $metadata->wwwroot, 'wwwroot');
+        $this->assertRegExp('/^2\.9\.\d+\+? \(Build: 201\d/', $metadata->moodle_release, 'moodle_release');
+        $this->assertIsHex(32, $metadata->backup_id, 'backup_id');
+        $this->assertISODate($metadata->backup_date, 'backup_date');
         $this->assertGreaterThan(6, $metadata->count_activities, 'count_activities'); # 67;
         $this->assertGreaterThan(1, $metadata->course_id); # 300638;
         $this->assertFileExists(TEST_INPUT_DIR . Parser::ROOT_XML_FILE);
@@ -74,7 +75,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, $page->id);
         $this->assertEquals('is-lorem-ipsum-for-me', $page->filename);
-        $this->assertRegExp('/^201\d-\d{2}-\d{2}T../', $page->timemodified);
+        $this->assertISODate($page->timemodified);
         $this->assertCount(2, $page->links);
         $this->assertCount(0, $page->files);
     }

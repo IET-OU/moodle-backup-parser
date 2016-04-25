@@ -20,6 +20,10 @@ class Parser
     const COURSE_XML_FILE = '/course/course.xml';
     const FILES_XML_FILE= '/files.xml';
 
+    const MBZ_FILE_REGEX = '/^backup-moodle2-course-\d+-\w+-20\d{6}-\d{4}-nu\.mbz$/';
+    const LINK_REGEX = '/\$@(?P<type>[A-Z]+)\*(?P<id>\d+)@\$/';
+    const FILE_REGEX = '/(?P<attr>(src|href))="@@PLUGINFILE@@(?P<path>[^"]+)/';
+
     protected $input_dir;
     protected $xmlo_root;
     protected $first_ordered;
@@ -27,6 +31,10 @@ class Parser
     protected $pages = [];
     protected $verbose = false;
 
+    /**
+     * @param string Parse the MBZ contents of the input directory.
+     * @return object Meta-data.
+     */
     public function parse($input_dir, $first_ordered = null)
     {
         $this->input_dir = (string) $input_dir;
@@ -58,7 +66,9 @@ class Parser
             'backup_format' => (string) $info->details->detail->format,
         ];
 
-        return $this->parseActivities();
+        $this->parseActivities();
+
+        return $this->getMetaData();
     }
 
     /**
@@ -130,7 +140,7 @@ class Parser
     protected function parseLinks($content)
     {
         $links = [];
-        if (preg_match_all('/\$@(?P<type>[A-Z]+)\*(?P<id>\d+)@\$/', $content, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all(self::LINK_REGEX, $content, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $links[ $match[ 'type' ] .'*'. $match[ 'id'] ] = $match[ 'id' ];
             }
@@ -145,7 +155,7 @@ class Parser
     protected function parseFileLinks($content)
     {
         $files = [];
-        if (preg_match_all('/(?P<attr>(src|href))="@@PLUGINFILE@@(?P<path>[^"]+)/', $content, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all(self::FILE_REGEX, $content, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $files[] = $match[ 'path' ];
             }

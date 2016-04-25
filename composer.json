@@ -28,7 +28,12 @@
     },
     "autoload": {
       "psr-4": {
-        "Nfreear\\MoodleBackupParser\\": [ "lib" ]
+        "Nfreear\\MoodleBackupParser\\": "lib"
+      }
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "Nfreear\\MoodleBackupParser\\Test\\Extend\\": "tests/extend"
       }
     },
     "scripts": {
