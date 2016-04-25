@@ -63,6 +63,22 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists(TEST_INPUT_DIR . Parser::FILES_XML_FILE);
     }
 
+    public function testParsePages()
+    {
+        $result = $this->parser->parse(TEST_INPUT_DIR);
+        $pages = $this->parser->getPages();
+
+        $this->assertCount(3, $pages);
+
+        $page = $pages[ 0 ];
+
+        $this->assertEquals(1, $page->id);
+        $this->assertEquals('is-lorem-ipsum-for-me', $page->filename);
+        $this->assertRegExp('/^201\d-\d{2}-\d{2}T../', $page->timemodified);
+        $this->assertCount(2, $page->links);
+        $this->assertCount(0, $page->files);
+    }
+
     public function testStaticPages()
     {
         // Arrange

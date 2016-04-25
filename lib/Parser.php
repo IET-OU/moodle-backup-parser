@@ -7,7 +7,6 @@
  *
  * @copyright Nick Freear, 20 April 2016.
  * @copyright Copyright 2016 The Open University.
- * @link  https://docs.moodle.org/27/en/Backup_and_restore_FAQ#Using_the_new_backup_format_.28experimental.29
  * @link  https://learn3.open.ac.uk/course/view.php?name=APPLAuD2016
  * @link  https://github.com/IET-OU/nnco/blob/master/themes/nnco/content/static-pages/about.htm
  */
@@ -62,11 +61,17 @@ class Parser
         return $this->parseActivities();
     }
 
+    /**
+     * @return object
+     */
     public function getMetaData()
     {
         return $this->metadata;
     }
 
+    /**
+     * @return array
+     */
     public function getPages()
     {
         return $this->pages;
@@ -112,17 +117,39 @@ class Parser
             'displayoptions' => unserialize((string) $xmlo->displayoptions),
             'revision' => (int) $xmlo->revision,
             'timemodified' => date('c', (int) $xmlo->timemodified),
-            'links' => $this->pageLinks((string) $xmlo->content),
+            'links' => $this->parseLinks((string) $xmlo->content),
+            'files' => $this->parseFileLinks((string) $xmlo->content),
         ];
         $this->pages[] = $page;
     }
 
-    protected function pageLinks($content)
+    /**
+     * PAGEVIEWBYID; URLVIEWBYID; FOLDERVIEWBYID; OUBLOGVIEW (..?)
+     * @return array
+     */
+    protected function parseLinks($content)
     {
         $links = [];
-        if (preg_match('/\$@URLVIEWBYID\*(?P<id>\d+)@\$/', $content, $matches)) {
-            $links[ $matches[ 0 ]] = $matches[ 'id' ];
+        if (preg_match_all('/\$@(?P<type>[A-Z]+)\*(?P<id>\d+)@\$/', $content, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $links[ $match[ 'type' ] .'*'. $match[ 'id'] ] = $match[ 'id' ];
+            }
         }
         return $links;
+    }
+
+    /**
+     * Parse links to files and embedded images – @@PLUGINFILE@@/path to file.pdf | jpg
+     * @return array
+     */
+    protected function parseFileLinks($content)
+    {
+        $files = [];
+        if (preg_match_all('/(?P<attr>(src|href))="@@PLUGINFILE@@(?P<path>[^"]+)/', $content, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $files[] = $match[ 'path' ];
+            }
+        }
+        return $files;
     }
 }

@@ -10,6 +10,8 @@ use \Nfreear\MoodleBackupParser\Clean;
 
 class StaticPages
 {
+    protected $wordwrap = 96;
+
     protected $output_dir;
     protected $pages = [];
     protected $urls = [];
@@ -17,8 +19,8 @@ class StaticPages
 
     public function putContents($output_dir, $pages_r)
     {
-         $this->output_dir = $output_dir;
-         $this->pages = $pages_r;
+        $this->output_dir = $output_dir;
+        $this->pages = $pages_r;
 
         foreach ($this->pages as $page) {
             $filename = $this->output_dir . '/' . $page->filename . '.htm';
@@ -27,7 +29,7 @@ class StaticPages
             $this->index[] = "<a href='$page->filename.htm'>$page->name</a>";
         }
 
-         return $this->putIndex();
+        return $this->putIndex();
     }
 
     public function getUrls()
@@ -44,6 +46,7 @@ class StaticPages
     protected function html($page)
     {
           $content = $page->content;
+          $html = Clean::html($content);
           unset($page->content);
           $page->file_date = date('c');
           $template = <<<EOT
@@ -74,7 +77,7 @@ EOT;
         return strtr($template, [
             '%title'=> $page->name,
             '%url'  => '/' . $page->filename . '.htm',
-            '%html' => Clean::html($content),
+            '%html' => $this->wordwrap ? wordwrap($html, $this->wordwrap) : $html,
             '%json' => json_encode($page, JSON_PRETTY_PRINT),
         ]);
     }

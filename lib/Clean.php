@@ -9,6 +9,10 @@
 
 class Clean
 {
+    /**
+     * @param string
+     * @return string
+     */
     public static function filename($name)
     {
         $filename = str_replace('  -  ', '-', strtolower(trim($name)));
@@ -18,6 +22,10 @@ class Clean
         return $filename;
     }
 
+    /**
+     * @param string
+     * @return string
+     */
     public static function html($content)
     {
         return preg_replace('/style="[^"]*"/', '', $content);

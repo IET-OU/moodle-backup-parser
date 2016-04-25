@@ -48,6 +48,12 @@
         "rm -rf tests/output/static-pages/*",
         "git checkout tests/output/static-pages"
       ],
+      "grep-links": [
+        "# Links",
+        "egrep -rno '<[^>]+=\"\\$@[A-Z]+\\*.+?>.+?<.+?>' ../static_pages",
+        "\n# Images & files\n",
+        "egrep -rno '<[^>]+=\"@@[A-Z]+@@[^>]+>' ../static_pages"
+      ],
       "fix": [
         "phpcbf --standard=PSR2 -n --encoding=utf-8 --extensions=php lib/*"
       ]
