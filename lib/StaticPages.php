@@ -29,10 +29,10 @@ class StaticPages
             switch ($activity->modulename) {
                 case 'label':
                     $this->index_html[] = $this->wrap($activity, $activity->content);
-                break;
+                    break;
                 case 'page':
                     $this->putPage($activity);
-                break;
+                    break;
             }
         }
 
@@ -43,7 +43,7 @@ class StaticPages
 
     protected function wrap($obj, $content)
     {
-        return "<div class='mod-$obj->modulename' data-id='$obj->id'>$content</div>";
+        return "<div class='mod-$obj->modulename' data-mid='$obj->id'>$content</div>";
     }
 
     protected function putPage($page)

@@ -22,7 +22,11 @@ define('TEST_OUTPUT_DIR', __DIR__ . '/output/static-pages');
 class ParserTest extends TestCaseExtended
 {
     protected $parser;
-    protected $verbose = false;
+    protected static $parse_options = [
+        'modulename' => 'page',
+        'title' => 'Is APPLAuD for me?',
+    ];
+    protected static $verbose = false;
 
     public function setup()
     {
@@ -31,18 +35,21 @@ class ParserTest extends TestCaseExtended
         $this->parser = new Parser();
     }
 
+    public function testInput()
+    {
+        $this->assertFileExists(TEST_INPUT_DIR . Parser::ROOT_XML_FILE);
+        $this->assertFileExists(TEST_INPUT_DIR . Parser::FILES_XML_FILE);
+    }
+
     public function testParse()
     {
         // Arrange
 
         // Act
-        $result = $this->parser->parse(TEST_INPUT_DIR, [
-            'modulename' => 'page',
-            'title' => 'Is APPLAuD for me?',
-        ]);
+        $result = $this->parser->parse(TEST_INPUT_DIR, self::$parse_options);
         $metadata = $this->parser->getMetaData();
 
-        if ($this->verbose) {
+        if (self::$verbose) {
             var_dump('Meta-data: ', $metadata);
         } else {
             printf("Backup name:  %s\n", $metadata->name);
@@ -60,8 +67,6 @@ class ParserTest extends TestCaseExtended
         $this->assertISODate($metadata->backup_date, 'backup_date');
         $this->assertGreaterThan(6, $metadata->count_activities, 'count_activities'); # 67;
         $this->assertGreaterThan(1, $metadata->course_id); # 300638;
-        $this->assertFileExists(TEST_INPUT_DIR . Parser::ROOT_XML_FILE);
-        $this->assertFileExists(TEST_INPUT_DIR . Parser::FILES_XML_FILE);
     }
 
     public function testParsePages()
@@ -73,6 +78,8 @@ class ParserTest extends TestCaseExtended
 
         $page = $pages[ 0 ];
 
+        printf("Count pages:  %s\n", count($pages));
+
         $this->assertEquals(1, $page->id);
         $this->assertEquals('is-lorem-ipsum-for-me', $page->filename);
         $this->assertISODate($page->timemodified);
@@ -83,22 +90,32 @@ class ParserTest extends TestCaseExtended
     public function testStaticPages()
     {
         // Arrange
-        $dumper = new StaticPages();
+        $generator = new StaticPages();
 
         $this->parser->parse(TEST_INPUT_DIR);
-        $pages = $this->parser->getPages();
-        $result = $dumper->putContents(TEST_OUTPUT_DIR, $pages);
+        $activities = $this->parser->getActivities();
+        $result = $generator->putContents(TEST_OUTPUT_DIR, $activities);
 
-        printf("Count pages:  %s\n", count($pages));
+        printf("Handled activities:  %s\n", count($activities));
 
-        $this->assertGreaterThan(1, count($pages), 'pages_count');  # 35;
+        $this->assertGreaterThan(2, count($activities), 'activities_count');  # 35;
+
+        $this->thenTestOutput();
+    }
+
+    protected function thenTestOutput()
+    {
         $this->assertFileExists(TEST_OUTPUT_DIR . '/index.htm');
         $this->assertFileExists(TEST_OUTPUT_DIR . '/is-lorem-ipsum-for-me.htm'); # '/is-applaud-for-me.htm'
 
+        $index= file_get_contents(TEST_OUTPUT_DIR . '/index.htm');
         $html = file_get_contents(TEST_OUTPUT_DIR . '/is-lorem-ipsum-for-me.htm');
 
         $this->assertStringStartsWith('[viewBag]', $html);
         $this->assertRegExp('/url = "\/[\w\-]+"/', $html);
         $this->assertRegExp('/<p>/', $html);
+
+        $this->assertRegExp('/mod-label/', $index, 'mod_label');
+        $this->assertRegExp('/data-mid=["\']\d+["\']/', $index, 'data_mid');
     }
 }
