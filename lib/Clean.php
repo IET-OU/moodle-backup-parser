@@ -28,6 +28,10 @@ class Clean
      */
     public static function html($content)
     {
-        return preg_replace('/style="[^"]*"/', '', $content);
+        $html = preg_replace('/style="[^"]*"/', '', $content);
+        $html = preg_replace('/(color|face|size)="[^"]*"/', '', $html);
+        $html = preg_replace('/&/', '&amp;', $html);
+        //$html = htmlentities($html, ENT_XML1);
+        return $html;
     }
 }

@@ -10,31 +10,52 @@ use \Nfreear\MoodleBackupParser\Clean;
 
 class StaticPages
 {
+    protected $base = '/';
     protected $wordwrap = 96;
 
     protected $output_dir;
-    protected $pages = [];
+    protected $activities = [];
     protected $urls = [];
     protected $index_html = [];
+    protected $site_map   = [];
     protected $references = [];
 
-    public function putContents($output_dir, $pages_r)
+    public function putContents($output_dir, $activities_r)
     {
         $this->output_dir = $output_dir;
-        $this->pages = $pages_r;
+        $this->activities = $activities_r;
 
-        foreach ($this->pages as $page) {
-            $page->url = $this->url($page->filename);
-            $filename = $this->output_dir . '/' . $page->filename . '.htm';
-            $bytes = file_put_contents($filename, $this->html($page));
-            $this->urls[ $page->url ] = $page->name;
-            $this->index_html[] = "<a href='$page->url'>$page->name</a>";
-            $this->references[] = $page->filename;
+        foreach ($this->activities as $activity) {
+            switch ($activity->modulename) {
+                case 'label':
+                    $this->index_html[] = $this->wrap($activity, $activity->content);
+                break;
+                case 'page':
+                    $this->putPage($activity);
+                break;
+            }
         }
 
         $this->putIndex();
 
         return $this->putYaml();
+    }
+
+    protected function wrap($obj, $content)
+    {
+        return "<div class='mod-$obj->modulename' data-id='$obj->id'>$content</div>";
+    }
+
+    protected function putPage($page)
+    {
+        $page->url = $this->url($page->filename);
+        $filename = $this->output_dir . '/' . $page->filename . '.htm';
+        $bytes = file_put_contents($filename, $this->html($page));
+        $this->urls[ $page->url ] = $page->name;
+        $this->index_html[] = $this->wrap($page, "<a href='.$page->url'>$page->name</a>");
+        $this->site_map[] = "<a href='.$page->url'>$page->name</a>";
+        $this->references[] = $page->filename;
+        return $bytes;
     }
 
     public function getUrls()
@@ -44,15 +65,15 @@ class StaticPages
 
     protected function url($filename)
     {
-        return '/' . $filename;
+        return $this->base . $filename;
     }
 
     protected function putIndex()
     {
         $filename = $this->output_dir . '/' . 'index' . '.htm';
         $page = (object) [
-            'name' => 'Site map',
-            'url'  => $this->url('site-map'),
+            'name' => 'Home',  //Was: 'APPLAuD', 'Site map',
+            'url'  => $this->url('index'),  //'site-map'
             'content' => "\n<ul>\n<li>" . implode("\n<li>", $this->index_html) . "\n</ul>\n",
         ];
         $bytes = file_put_contents($filename, $this->html($page));

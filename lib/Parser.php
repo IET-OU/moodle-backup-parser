@@ -29,6 +29,7 @@ class Parser
     protected $first_ordered;
     protected $metadata;
     protected $pages = [];
+    protected $activities = []; // THE sequence.
     protected $verbose = false;
 
     /**
@@ -87,6 +88,14 @@ class Parser
         return $this->pages;
     }
 
+    /**
+     * @return array
+     */
+    public function getActivities()
+    {
+        return $this->activities;
+    }
+
     protected function parseActivities()
     {
         $activities = $this->xmlo_root->information->contents->activities->activity;
@@ -97,8 +106,11 @@ class Parser
                 break;
             }*/
             switch ($modulename) {
+                case 'label':
+                    $this->parseLabel($act->directory);
+                    break;
                 case 'page':
-                    $this->parsePage($this->input_dir . '/' . (string) $act->directory);
+                    $this->parsePage($act->directory);
                     break;
                 default:
                     if ($this->verbose) {
@@ -109,28 +121,43 @@ class Parser
         }
     }
 
-    protected function parsePage($dir)
+    protected function parseObject($dir, $modtype, $content = 'intro', $extra = [])
     {
-        $xml_path = $dir . '/' . 'page.xml';
+        $xml_path = $this->input_dir . '/' . (string) $dir . '/' . $modtype . '.xml';
         $xmlo = simplexml_load_file($xml_path);
+        $context = (int) $xmlo[ 'contextid' ];
         $modid = (int) $xmlo[ 'moduleid' ];
-        $xmlo = $xmlo->page;
+        $modname = (string) $xmlo[ 'modulename' ];
+        $xmlo = $xmlo->{ $modtype };
 
-        $page = (object) [
+        $object = [
             'id' => (int) $xmlo[ 'id' ],
             'moduleid' => $modid,
+            'modulename' => $modname,
             'name' => (string) $xmlo->name,
             'filename' => Clean::filename((string) $xmlo->name),
             'intro' => (string) $xmlo->intro,
-            'content' => (string) html_entity_decode($xmlo->content),
-            'contentformat' => (int) $xmlo->contentformat,
-            'displayoptions' => unserialize((string) $xmlo->displayoptions),
-            'revision' => (int) $xmlo->revision,
+            'content' => (string) html_entity_decode($xmlo->{ $content }),
+            'contentformat' => (int) $xmlo->{ $content . 'format' },
             'timemodified' => date('c', (int) $xmlo->timemodified),
-            'links' => $this->parseLinks((string) $xmlo->content),
-            'files' => $this->parseFileLinks((string) $xmlo->content),
+            'links' => $this->parseLinks((string) $xmlo->{ $content }),
+            'files' => $this->parseFileLinks((string) $xmlo->{ $content }),
         ];
-        $this->pages[] = $page;
+        foreach ($extra as $key) {
+            $object[ $key ] = (string) $xmlo->{ $key };
+        }
+        return (object) $object;
+    }
+
+    protected function parseLabel($dir)
+    {
+        $this->activities[] = $this->parseObject($dir, 'label', 'intro');
+    }
+
+    protected function parsePage($dir)
+    {
+        $page = $this->parseObject($dir, 'page', 'content', [ 'revision', 'displayoptions' ]);
+        $this->pages[] = $this->activities[] = $page;
     }
 
     /**
