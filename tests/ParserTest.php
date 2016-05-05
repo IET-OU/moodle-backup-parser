@@ -98,7 +98,7 @@ class ParserTest extends TestCaseExtended
         $html = file_get_contents(TEST_OUTPUT_DIR . '/is-lorem-ipsum-for-me.htm');
 
         $this->assertStringStartsWith('[viewBag]', $html);
-        $this->assertRegExp('/url = "\/[\w\-]+.htm"/', $html);
+        $this->assertRegExp('/url = "\/[\w\-]+"/', $html);
         $this->assertRegExp('/<p>/', $html);
     }
 }

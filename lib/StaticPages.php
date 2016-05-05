@@ -15,7 +15,8 @@ class StaticPages
     protected $output_dir;
     protected $pages = [];
     protected $urls = [];
-    protected $index = [];
+    protected $index_html = [];
+    protected $references = [];
 
     public function putContents($output_dir, $pages_r)
     {
@@ -23,13 +24,17 @@ class StaticPages
         $this->pages = $pages_r;
 
         foreach ($this->pages as $page) {
+            $page->url = $this->url($page->filename);
             $filename = $this->output_dir . '/' . $page->filename . '.htm';
             $bytes = file_put_contents($filename, $this->html($page));
-            $this->urls[ $page->filename . '.htm' ] = $page->name;
-            $this->index[] = "<a href='$page->filename.htm'>$page->name</a>";
+            $this->urls[ $page->url ] = $page->name;
+            $this->index_html[] = "<a href='$page->url'>$page->name</a>";
+            $this->references[] = $page->filename;
         }
 
-        return $this->putIndex();
+        $this->putIndex();
+
+        return $this->putYaml();
     }
 
     public function getUrls()
@@ -37,10 +42,34 @@ class StaticPages
         return $this->urls;
     }
 
-    public function putIndex()
+    protected function url($filename)
+    {
+        return '/' . $filename;
+    }
+
+    protected function putIndex()
     {
         $filename = $this->output_dir . '/' . 'index' . '.htm';
-        $bytes = file_put_contents($filename, implode("\n<li>", $this->index));
+        $page = (object) [
+            'name' => 'Site map',
+            'url'  => $this->url('site-map'),
+            'content' => "\n<ul>\n<li>" . implode("\n<li>", $this->index_html) . "\n</ul>\n",
+        ];
+        $bytes = file_put_contents($filename, $this->html($page));
+        return $bytes;
+    }
+
+    protected function putYaml()
+    {
+        $filename = $this->output_dir . '/' . '-static-pages.yaml';
+
+        $yml_pre = "# Auto-generated:  " . date('c') .
+            "\n\nstatic-pages:\n    index: { }\n    ";
+        $yml_post = ": { }\n\n#End.\n";
+        $yml_join = ": { }\n    ";
+
+        $bytes = file_put_contents($filename, $yml_pre . implode($yml_join, $this->references) . $yml_post);
+        return $bytes;
     }
 
     protected function html($page)
@@ -76,7 +105,7 @@ about
 EOT;
         return strtr($template, [
             '%title'=> $page->name,
-            '%url'  => '/' . $page->filename . '.htm',
+            '%url'  => $page->url,
             '%html' => $this->wordwrap ? wordwrap($html, $this->wordwrap) : $html,
             '%json' => json_encode($page, JSON_PRETTY_PRINT),
         ]);

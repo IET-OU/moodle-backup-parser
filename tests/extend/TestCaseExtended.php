@@ -25,7 +25,7 @@ abstract class TestCaseExtended extends \PHPUnit_Framework_TestCase //\PHPUnit_F
 
     public function assertISODate($testDateTime, $message = null)
     {
-        $this->assertRegExp('/^20\d{2}-\d{2}-\d{2}[T ]\d{2}:/', $testDateTime, self::f($message, __FUNCTION__, 'ISO 8601'));
+        $this->assertRegExp('/^20\d{2}-\d{2}-\d{2}[T ]\d{2}:\d{2}/', $testDateTime, self::f($message, __FUNCTION__, 'ISO 8601'));
     }
 
     public function assertRFCLikeDate($testDateTime, $message = null)

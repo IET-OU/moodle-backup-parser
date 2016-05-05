@@ -1,8 +1,11 @@
 
+.gitattributes
+
 composer.lock
 vendor
 bin
 tests/**/*.htm
+*.yaml
 *BAK*
 coverage.clover
 *.gz*
