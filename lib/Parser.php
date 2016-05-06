@@ -12,6 +12,7 @@
  */
 
 use \Nfreear\MoodleBackupParser\Clean;
+use \Nfreear\MoodleBackupParser\FilesParser;
 
 class Parser
 {
@@ -30,7 +31,13 @@ class Parser
     protected $metadata;
     protected $pages = [];
     protected $activities = []; // THE sequence.
+    protected $files;
     protected $verbose = false;
+
+    public function __construct()
+    {
+        $this->files = new FilesParser();
+    }
 
     /**
      * @param string Parse the MBZ contents of the input directory.
@@ -68,6 +75,7 @@ class Parser
         ];
 
         $this->parseActivities();
+        $this->files->parseFiles($this->input_dir);
 
         return $this->getMetaData();
     }
@@ -78,6 +86,11 @@ class Parser
     public function getMetaData()
     {
         return $this->metadata;
+    }
+
+    public function getFiles()
+    {
+        return $this->files->getFiles();
     }
 
     /**
@@ -181,12 +194,12 @@ class Parser
      */
     protected function parseFileLinks($content)
     {
-        $files = [];
+        $file_links = [];
         if (preg_match_all(self::FILE_REGEX, $content, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
-                $files[] = $match[ 'path' ];
+                $file_links[] = $match[ 'path' ];
             }
         }
-        return $files;
+        return $file_links;
     }
 }

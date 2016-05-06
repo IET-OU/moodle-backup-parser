@@ -1,14 +1,14 @@
 {
     "name": "iet-ou/moodle-backup-parser",
-    "description": "Parse Moodle backup MBZ archives. Developed for OU-APPLAuD. ©2016 The Open University, UK (IET).",
+    "description": "Library to parse Moodle backup MBZ archives. Generate October static pages. Developed for APPLAuD. ©The Open University (IET).",
     "homepage": "https://docs.moodle.org/29/en/Course_backup",
-    "keywords": [ "Moodle", "archive", "zip", "course", "VLE", "OpenUniversity", "IET-OU" ],
+    "keywords": [ "Moodle", "archive", "zip", "course", "VLE", "October", "OpenUniversity", "IET-OU" ],
     "license": "proprietary",
     "time": "2016-04-20T15:10:55",
     "minimum-stability": "beta",
     "type": "library",
     "authors": [
-      { "name": "Nick Freear (@nfreear)", "role": "Lead developer" }
+      { "name": "Nick Freear (@nfreear)", "role": "Developer" }
     ],
     "support": {
       "email": "iet-webmaster@open.ac.uk",
@@ -24,7 +24,7 @@
       "phpunit/phpunit": "~4.0"
     },
     "suggest": {
-      "Moodle": ">= 2.9.3; E-learning platform <https://github.com/moodle/moodle>"
+      "Moodle": ">= 2.9.3; Moodle e-learning platform <https://moodle.org>"
     },
     "autoload": {
       "psr-4": {
@@ -62,5 +62,10 @@
       "fix": [
         "phpcbf --standard=PSR2 -n --encoding=utf-8 --extensions=php lib/*"
       ]
+    },
+    "extra": {
+      "branch-alias": {
+        "dev-master": "1.0.x-dev"
+      }
     }
 }

@@ -5,6 +5,8 @@ composer.lock
 vendor
 bin
 tests/**/*.htm
+tests/**/*.pdf
+tests/**/*.doc*
 *.yaml
 *BAK*
 coverage.clover

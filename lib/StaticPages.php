@@ -41,6 +41,16 @@ class StaticPages
         return $this->putYaml();
     }
 
+    public function putFiles($output_files_dir, $files_r)
+    {
+        $count = 0;
+        foreach ($files_r as $file) {
+            $b_ok = copy($file->hashpath, $output_files_dir . '/' . $file->filename);
+            $count += (int) $b_ok;
+        }
+        return $count;
+    }
+
     protected function wrap($obj, $content)
     {
         return "<div class='mod-$obj->modulename' data-mid='$obj->id'>$content</div>";

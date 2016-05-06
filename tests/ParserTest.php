@@ -105,6 +105,7 @@ class ParserTest extends TestCaseExtended
 
     protected function thenTestOutput()
     {
+        $this->assertFileExists(TEST_OUTPUT_DIR . '/-static-pages.yaml');
         $this->assertFileExists(TEST_OUTPUT_DIR . '/index.htm');
         $this->assertFileExists(TEST_OUTPUT_DIR . '/is-lorem-ipsum-for-me.htm'); # '/is-applaud-for-me.htm'
 
