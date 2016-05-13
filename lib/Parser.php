@@ -13,6 +13,7 @@
 
 use \Nfreear\MoodleBackupParser\Clean;
 use \Nfreear\MoodleBackupParser\FilesParser;
+use \Nfreear\MoodleBackupParser\SectionsParser;
 
 class Parser
 {
@@ -32,11 +33,13 @@ class Parser
     protected $pages = [];
     protected $activities = []; // THE sequence.
     protected $files;
+    protected $sections;
     protected $verbose = false;
 
     public function __construct()
     {
         $this->files = new FilesParser();
+        $this->sections = new SectionsParser();
     }
 
     /**
@@ -74,6 +77,8 @@ class Parser
             'backup_format' => (string) $info->details->detail->format,
         ];
 
+        $this->sections->parseSectionsSequences($this->input_dir, $this->xmlo_root);
+
         $this->parseActivities();
         $this->files->parseFiles($this->input_dir);
 
@@ -91,6 +96,11 @@ class Parser
     public function getFiles()
     {
         return $this->files->getFiles();
+    }
+
+    public function getSections()
+    {
+        return $this->sections->getSections();
     }
 
     /**
