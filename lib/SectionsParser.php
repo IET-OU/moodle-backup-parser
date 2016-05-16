@@ -33,8 +33,6 @@ class SectionsParser
             //$title = (string) $section->title;
             $dir = (string) $section->directory;
             $xml_path = $input_dir . '/' . $dir . self::SECTION_XML_FILE;
-            #var_dump($xml_path);
-            #exit;
 
             $xmlo = simplexml_load_file($xml_path);
             $section_id = (int) $xmlo[ 'id' ];
@@ -46,20 +44,17 @@ class SectionsParser
             $sequence_r = explode(',', $sequence);
 
             $sp = $xmlo->plugin_format_studyplan_section;
-            $sections_out [ 'id:' . $section_id ] = (object) [
+            $sections_out [ "sid:$section_id" ] = (object) [
                 'id' => $section_id,
                 'week_id'  => (int) $sp->week[ 'id' ],
                 'title'    => $sp ? (string) $sp->week->title : null,
                 'activity_sequence' => $sequence_r,
             ];
-            foreach ($sequence_r as $act_id) {
-                $sections_lookup[ 'id:' . $act_id ] = $section_id;
+            foreach ($sequence_r as $activity_mid) {
+                $sections_lookup[ "mid:$activity_mid" ] = $section_id;
             }
         }
-        var_dump("Lookup: ", $sections_lookup);
 
-        var_dump("Sections:", count($sections_skip), $sections_out);
-#exit;
         $this->sections_out = $sections_out;
         $this->sections_skip = $sections_skip;
         $this->sections_lookup = $sections_lookup;

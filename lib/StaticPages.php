@@ -20,7 +20,7 @@ class StaticPages
     protected $site_map   = [];
     protected $references = [];
 
-    public function putContents($output_dir, $activities_r)
+    public function putContents($output_dir, $activities_r, $sections = null)
     {
         $this->output_dir = $output_dir;
         $this->activities = $activities_r;
@@ -32,6 +32,10 @@ class StaticPages
                     break;
                 case 'page':
                     $this->putPage($activity);
+                    break;
+                default:
+                    $this->index_html[] = $this->wrap(
+                        $activity, "<i>$activity->modulename</i> $activity->name", 'mod-placeholder', 'Placeholder');
                     break;
             }
         }
@@ -51,9 +55,9 @@ class StaticPages
         return $count;
     }
 
-    protected function wrap($obj, $content)
+    protected function wrap($obj, $content, $cls = null, $ttl = null)
     {
-        return "<div class='mod-$obj->modulename' data-mid='$obj->id'>$content</div>";
+        return Clean::html("<li class='mod-$obj->modulename $cls' data-mid='$obj->moduleid' title='$ttl'>$content</li>");
     }
 
     protected function putPage($page)
@@ -83,8 +87,8 @@ class StaticPages
         $filename = $this->output_dir . '/' . 'index' . '.htm';
         $page = (object) [
             'name' => 'Home',  //Was: 'APPLAuD', 'Site map',
-            'url'  => $this->url('index'),  //'site-map'
-            'content' => "\n<ul>\n<li>" . implode("\n<li>", $this->index_html) . "\n</ul>\n",
+            'url'  => $this->url(''),  //Was: 'index', 'site-map'.
+            'content' => "\n<ul>\n" . implode("\n", $this->index_html) . "\n</ul>\n",
         ];
         $bytes = file_put_contents($filename, $this->html($page));
         return $bytes;
@@ -128,13 +132,16 @@ about
 about
 {% endput %}
 ==
+<div id="mbp-pg-content" class="%className" data-uri="%url">
 %html
-<script type="application/json">
+</div>
+<script id="mbp-pg-data" type="application/json">
 %json
 </script>
 
 EOT;
         return strtr($template, [
+            '%className' => isset($page->modulename) ? "pg-mod-$page->modulename" : 'pg-other',
             '%title'=> $page->name,
             '%url'  => $page->url,
             '%html' => $this->wordwrap ? wordwrap($html, $this->wordwrap) : $html,

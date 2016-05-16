@@ -30,7 +30,10 @@ class Clean
     {
         $html = preg_replace('/style="[^"]*"/', '', $content);
         $html = preg_replace('/(color|face|size)="[^"]*"/', '', $html);
-        $html = preg_replace('/&/', '&amp;', $html);
+        $html = preg_replace('/&#160;/', ' ', $html);
+
+        //$html = preg_replace('/&/', '&amp;', $html);
+        //$html = preg_replace('/> (\w)/', '>$1', $html);
         //$html = htmlentities($html, ENT_XML1);
         return $html;
     }

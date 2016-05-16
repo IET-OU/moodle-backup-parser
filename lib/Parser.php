@@ -125,20 +125,22 @@ class Parser
         $this->metadata->count_activities = $activities->count();
         foreach ($activities as $act) {
             $modulename = (string) $act->modulename;
+            $mid = (int) $act->moduleid;
             /*if ($act->title === $this->first_ordered->title) {
                 break;
             }*/
             switch ($modulename) {
                 case 'label':
-                    $this->parseLabel($act->directory);
+                    $this->parseLabel($act->directory, $mid);
                     break;
                 case 'page':
-                    $this->parsePage($act->directory);
+                    $this->parsePage($act->directory, $mid);
                     break;
                 default:
                     if ($this->verbose) {
                         printf("Pass. Module not currently supported: %s\n", (string) $act->directory);
                     }
+                    $this->activities[ "mid:$mid" ] = $this->parseObject($act->directory, $modulename, null);
                     break;
             }
         }
@@ -160,8 +162,8 @@ class Parser
             'name' => (string) $xmlo->name,
             'filename' => Clean::filename((string) $xmlo->name),
             'intro' => (string) $xmlo->intro,
-            'content' => (string) html_entity_decode($xmlo->{ $content }),
-            'contentformat' => (int) $xmlo->{ $content . 'format' },
+            'content' => $content ? (string) html_entity_decode($xmlo->{ $content }) : null,
+            'contentformat' => $content ? (int) $xmlo->{ $content . 'format' } : null,
             'timemodified' => date('c', (int) $xmlo->timemodified),
             'links' => $this->parseLinks((string) $xmlo->{ $content }),
             'files' => $this->parseFileLinks((string) $xmlo->{ $content }),
@@ -172,15 +174,15 @@ class Parser
         return (object) $object;
     }
 
-    protected function parseLabel($dir)
+    protected function parseLabel($dir, $mid)
     {
-        $this->activities[] = $this->parseObject($dir, 'label', 'intro');
+        $this->activities[ "mid:$mid" ] = $this->parseObject($dir, 'label', 'intro');
     }
 
-    protected function parsePage($dir)
+    protected function parsePage($dir, $mid)
     {
         $page = $this->parseObject($dir, 'page', 'content', [ 'revision', 'displayoptions' ]);
-        $this->pages[] = $this->activities[] = $page;
+        $this->pages[] = $this->activities[ "mid:$mid" ] = $page;
     }
 
     /**
