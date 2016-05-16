@@ -35,7 +35,11 @@ class StaticPages
                     break;
                 default:
                     $this->index_html[] = $this->wrap(
-                        $activity, "<i>$activity->modulename</i> $activity->name", 'mod-placeholder', 'Placeholder');
+                        $activity,
+                        "<i>$activity->modulename</i> $activity->name",
+                        'mod-placeholder',
+                        'Placeholder'
+                    );
                     break;
             }
         }
