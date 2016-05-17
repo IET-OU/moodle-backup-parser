@@ -25,6 +25,46 @@ class StaticPages
         $this->output_dir = $output_dir;
         $this->activities = $activities_r;
 
+        if (! $sections) {
+            return $this->putContentsFlat();
+        }
+
+        $count = 0;
+        foreach ($sections->sections as $section) {
+            $count++;
+            $sequence = $section->activity_sequence;
+
+            $this->index_html[] = $this->sectionHead($section, $count);
+
+            foreach ($sequence as $mod_id) {
+                if (! isset($activities_r[ "mid:$mod_id" ])) {
+                    throw new Exception(sprintf('Error! Ativity not found, mod ID: %s, section ID: %s', $mod_id, $section->id));
+                }
+
+                $activity = $activities_r[ "mid:$mod_id" ];
+
+                switch ($activity->modulename) {
+                    case 'label':
+                        $this->index_html[] = $this->wrap($activity, $activity->content);
+                        break;
+                    case 'page':
+                        $this->putPage($activity);
+                        break;
+                    default:
+                        $this->index_html[] = $this->placeholder($activity);
+                        break;
+                }
+            }
+            $this->index_html[] = Clean::html("</ul></div>\n");
+        }
+
+        $this->putIndex();
+
+        return $this->putYaml();
+    }
+
+    public function putContentsFlat() // LEGACY?
+    {
         foreach ($this->activities as $activity) {
             switch ($activity->modulename) {
                 case 'label':
@@ -34,12 +74,7 @@ class StaticPages
                     $this->putPage($activity);
                     break;
                 default:
-                    $this->index_html[] = $this->wrap(
-                        $activity,
-                        "<i>$activity->modulename</i> $activity->name",
-                        'mod-placeholder',
-                        'Placeholder'
-                    );
+                    $this->index_html[] = $this->placeholder($activity);
                     break;
             }
         }
@@ -57,6 +92,25 @@ class StaticPages
             $count += (int) $b_ok;
         }
         return $count;
+    }
+
+    protected function sectionHead($sect, $idx)
+    {
+        $heading = $sect->title ? "<h2>$sect->title</h2>" : '';
+        $cls = 'mod-section' . ($sect->title ? '': ' anonymous');
+        return Clean::html(
+            "<div id='section-$idx' data-sid='$sect->id' class='$cls'>" . $heading . "<ul>\n"
+        );
+    }
+
+    protected function placeholder($activity)
+    {
+        return $this->wrap(
+            $activity,
+            "<i>$activity->modulename</i> $activity->name",
+            'mod-placeholder',
+            'Placeholder'
+        );
     }
 
     protected function wrap($obj, $content, $cls = null, $ttl = null)
