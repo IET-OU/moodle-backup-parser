@@ -12,28 +12,26 @@ class Html
 {
     protected $wordwrap = 96;
 
-    public static function sectionHead($sect, $idx)
+    public static function sectionHead($section, $idx)
     {
-        $heading = $sect->title ? "<h2>$sect->title</h2>" : '';
-        $cls = 'mod-section' . ($sect->title ? '': ' anonymous');
-        return Clean::html(
-            "<div id='section-$idx' data-sid='$sect->id' class='$cls'>" . $heading . "<ul>\n"
-        );
+        $heading = $section->title ? "<h2>$section->title</h2>" : '';
+        $cls = 'mod-section' . ($section->title ? '': ' anonymous');
+        $sid = $section->id;
+        return Clean::html("<div id='sect-$idx' data-sid='$sid' class='$cls'>$heading<ul>\n");
     }
 
     public static function activityPlaceholder($activity)
     {
-        return self::wrap(
-            $activity,
-            "<i>$activity->modulename</i> $activity->name",
-            'mod-placeholder',
-            'Placeholder'
-        );
+        $mod_name = $activity->modulename;
+        $name = $activity->name;
+        return self::wrap($activity, "<i>$mod_name</i> $name", 'mod-placeholder', 'Placeholder');
     }
 
-    public static function wrap($obj, $content, $cls = null, $ttl = null)
+    public static function wrap($activity, $text, $cls = null, $title = null)
     {
-        return Clean::html("<li class='mod-$obj->modulename $cls' data-mid='$obj->moduleid' title='$ttl'>$content</li>");
+        $mod_name = $activity->modulename;
+        $mod_id   = $activity->moduleid;
+        return Clean::html("<li class='mod-$mod_name $cls' data-mid='$mod_id' title='$title'>$text</li>");
     }
 
     public static function clean($html)

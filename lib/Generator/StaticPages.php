@@ -10,6 +10,8 @@ use Nfreear\MoodleBackupParser\Generator\Html;
 
 class StaticPages
 {
+    protected $options = [];
+
     protected $base = '/';
 
     protected $output_dir;
@@ -24,6 +26,12 @@ class StaticPages
     public function __construct()
     {
         $this->html = new Html();
+    }
+
+    public function setOptions($options)
+    {
+        printf("Set options: %s\n", json_encode($options, JSON_PRETTY_PRINT));
+        $this->options = $options;
     }
 
     public function putContents($output_dir, $activities_r, $sections = null)
@@ -55,6 +63,11 @@ class StaticPages
                         break;
                     case 'page':
                         $this->putPage($activity);
+                        break;
+                    case 'oublog':
+                    case 'oucollaborate':  // Drop-through!
+                    case 'forumng':
+                        $this->index_html[] = $this->simpleActivityLink($activity);
                         break;
                     default:
                         $this->index_html[] = Html::activityPlaceholder($activity);
@@ -98,6 +111,14 @@ class StaticPages
             $count += (int) $b_ok;
         }
         return $count;
+    }
+
+    protected function simpleActivityLink($activity)
+    {
+        $name = $activity->name;
+        $url_format = $this->options[ $activity->modulename . '_url' ];
+        $url = sprintf($url_format, $activity->moduleid);
+        return Html::wrap($activity, "<a href='$url'>$name</a>");
     }
 
     protected function putPage($page)
