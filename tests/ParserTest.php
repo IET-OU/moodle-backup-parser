@@ -13,7 +13,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 use \Nfreear\MoodleBackupParser\Parser;
-use \Nfreear\MoodleBackupParser\StaticPages;
+use \Nfreear\MoodleBackupParser\Generator\StaticPages;
 use \Nfreear\MoodleBackupParser\Test\Extend\TestCaseExtended;
 
 define('TEST_INPUT_DIR', __DIR__ . '/fixtures/backup-moodle2');
@@ -94,7 +94,8 @@ class ParserTest extends TestCaseExtended
 
         $this->parser->parse(TEST_INPUT_DIR);
         $activities = $this->parser->getActivities();
-        $result = $generator->putContents(TEST_OUTPUT_DIR, $activities);
+        $sections   = $this->parser->getSections();
+        $result = $generator->putContents(TEST_OUTPUT_DIR, $activities, $sections);
 
         printf("Handled activities:  %s\n", count($activities));
 
@@ -118,5 +119,9 @@ class ParserTest extends TestCaseExtended
 
         $this->assertRegExp('/mod-label/', $index, 'mod_label');
         $this->assertRegExp('/data-mid=["\']\d+["\']/', $index, 'data_mid');
+
+        $this->assertRegexp("/id='section-\d+'/", $index, 'html ID section');
+        $this->assertRegExp('/mod-section/', $index, 'mod_section');
+        $this->assertRegExp('/data-sid=["\']\d+["\']/', $index, 'data-sid');
     }
 }

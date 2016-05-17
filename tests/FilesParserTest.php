@@ -7,7 +7,7 @@
  */
 
 use \Nfreear\MoodleBackupParser\Parser;
-use \Nfreear\MoodleBackupParser\StaticPages;
+use \Nfreear\MoodleBackupParser\Generator\StaticPages;
 
 define('TEST_FILES_DIR', __DIR__ . '/output/static-pages/files');
 

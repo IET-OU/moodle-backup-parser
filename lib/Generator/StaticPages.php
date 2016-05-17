@@ -1,4 +1,4 @@
-<?php namespace Nfreear\MoodleBackupParser;
+<?php namespace Nfreear\MoodleBackupParser\Generator;
 
 /**
  * Output static pages compatible with OctoberCMS.
@@ -6,12 +6,11 @@
  * @copyright Nick Freear, 20 April 2016.
  */
 
-use \Nfreear\MoodleBackupParser\Clean;
+use Nfreear\MoodleBackupParser\Generator\Html;
 
 class StaticPages
 {
     protected $base = '/';
-    protected $wordwrap = 96;
 
     protected $output_dir;
     protected $activities = [];
@@ -19,6 +18,13 @@ class StaticPages
     protected $index_html = [];
     protected $site_map   = [];
     protected $references = [];
+
+    protected $html;
+
+    public function __construct()
+    {
+        $this->html = new Html();
+    }
 
     public function putContents($output_dir, $activities_r, $sections = null)
     {
@@ -34,7 +40,7 @@ class StaticPages
             $count++;
             $sequence = $section->activity_sequence;
 
-            $this->index_html[] = $this->sectionHead($section, $count);
+            $this->index_html[] = Html::sectionHead($section, $count);
 
             foreach ($sequence as $mod_id) {
                 if (! isset($activities_r[ "mid:$mod_id" ])) {
@@ -45,17 +51,17 @@ class StaticPages
 
                 switch ($activity->modulename) {
                     case 'label':
-                        $this->index_html[] = $this->wrap($activity, $activity->content);
+                        $this->index_html[] = Html::wrap($activity, $activity->content);
                         break;
                     case 'page':
                         $this->putPage($activity);
                         break;
                     default:
-                        $this->index_html[] = $this->placeholder($activity);
+                        $this->index_html[] = Html::activityPlaceholder($activity);
                         break;
                 }
             }
-            $this->index_html[] = Clean::html("</ul></div>\n");
+            $this->index_html[] = Html::clean("</ul></div>\n");
         }
 
         $this->putIndex();
@@ -68,13 +74,13 @@ class StaticPages
         foreach ($this->activities as $activity) {
             switch ($activity->modulename) {
                 case 'label':
-                    $this->index_html[] = $this->wrap($activity, $activity->content);
+                    $this->index_html[] = Html::wrap($activity, $activity->content);
                     break;
                 case 'page':
                     $this->putPage($activity);
                     break;
                 default:
-                    $this->index_html[] = $this->placeholder($activity);
+                    $this->index_html[] = Html::activityPlaceholder($activity);
                     break;
             }
         }
@@ -94,37 +100,13 @@ class StaticPages
         return $count;
     }
 
-    protected function sectionHead($sect, $idx)
-    {
-        $heading = $sect->title ? "<h2>$sect->title</h2>" : '';
-        $cls = 'mod-section' . ($sect->title ? '': ' anonymous');
-        return Clean::html(
-            "<div id='section-$idx' data-sid='$sect->id' class='$cls'>" . $heading . "<ul>\n"
-        );
-    }
-
-    protected function placeholder($activity)
-    {
-        return $this->wrap(
-            $activity,
-            "<i>$activity->modulename</i> $activity->name",
-            'mod-placeholder',
-            'Placeholder'
-        );
-    }
-
-    protected function wrap($obj, $content, $cls = null, $ttl = null)
-    {
-        return Clean::html("<li class='mod-$obj->modulename $cls' data-mid='$obj->moduleid' title='$ttl'>$content</li>");
-    }
-
     protected function putPage($page)
     {
         $page->url = $this->url($page->filename);
         $filename = $this->output_dir . '/' . $page->filename . '.htm';
-        $bytes = file_put_contents($filename, $this->html($page));
+        $bytes = file_put_contents($filename, $this->html->staticHtml($page));
         $this->urls[ $page->url ] = $page->name;
-        $this->index_html[] = $this->wrap($page, "<a href='.$page->url'>$page->name</a>");
+        $this->index_html[] = Html::wrap($page, "<a href='.$page->url'>$page->name</a>");
         $this->site_map[] = "<a href='.$page->url'>$page->name</a>";
         $this->references[] = $page->filename;
         return $bytes;
@@ -148,7 +130,7 @@ class StaticPages
             'url'  => $this->url(''),  //Was: 'index', 'site-map'.
             'content' => "\n<ul>\n" . implode("\n", $this->index_html) . "\n</ul>\n",
         ];
-        $bytes = file_put_contents($filename, $this->html($page));
+        $bytes = file_put_contents($filename, $this->html->staticHtml($page));
         return $bytes;
     }
 
@@ -163,48 +145,6 @@ class StaticPages
 
         $bytes = file_put_contents($filename, $yml_pre . implode($yml_join, $this->references) . $yml_post);
         return $bytes;
-    }
-
-    protected function html($page)
-    {
-          $content = $page->content;
-          $html = Clean::html($content);
-          unset($page->content);
-          $page->file_date = date('c');
-          $template = <<<EOT
-[viewBag]
-title = "%title"
-url = "%url"
-layout = "default"
-is_hidden = 0
-navigation_hidden = 0
-meta_title = "About X"
-meta_description = "About page ..Y"
-tagline = "...Z"
-==
-{% put keywords %}
-about
-{% endput %}
-
-{% put bodyid %}
-about
-{% endput %}
-==
-<div id="mbp-pg-content" class="%className" data-uri="%url">
-%html
-</div>
-<script id="mbp-pg-data" type="application/json">
-%json
-</script>
-
-EOT;
-        return strtr($template, [
-            '%className' => isset($page->modulename) ? "pg-mod-$page->modulename" : 'pg-other',
-            '%title'=> $page->name,
-            '%url'  => $page->url,
-            '%html' => $this->wordwrap ? wordwrap($html, $this->wordwrap) : $html,
-            '%json' => json_encode($page, JSON_PRETTY_PRINT),
-        ]);
     }
 
     protected function expandLinks($page)

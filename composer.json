@@ -29,7 +29,8 @@
     },
     "autoload": {
       "psr-4": {
-        "Nfreear\\MoodleBackupParser\\": "lib"
+        "Nfreear\\MoodleBackupParser\\": "lib",
+        "Nfreear\\MoodleBackupParser\\Generator\\": "lib/Generator"
       }
     },
     "autoload-dev": {
