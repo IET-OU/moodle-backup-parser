@@ -14,6 +14,7 @@
 use \Nfreear\MoodleBackupParser\Clean;
 use \Nfreear\MoodleBackupParser\FilesParser;
 use \Nfreear\MoodleBackupParser\SectionsParser;
+use Exception;
 
 class Parser
 {
