@@ -120,7 +120,7 @@ class ParserTest extends TestCaseExtended
         $this->assertRegExp('/mod-label/', $index, 'mod_label');
         $this->assertRegExp('/data-mid=["\']\d+["\']/', $index, 'data_mid');
 
-        $this->assertRegexp("/id='section-\d+'/", $index, 'html ID section');
+        $this->assertRegexp("/id='sect-\d+'/", $index, 'html ID section');
         $this->assertRegExp('/mod-section/', $index, 'mod_section');
         $this->assertRegExp('/data-sid=["\']\d+["\']/', $index, 'data-sid');
     }
