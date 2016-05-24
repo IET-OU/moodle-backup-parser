@@ -16,6 +16,7 @@ class StaticPages
 
     protected $output_dir;
     protected $activities = [];
+    protected $sections   = [];
     protected $urls = [];
     protected $index_html = [];
     protected $site_map   = [];
@@ -38,6 +39,7 @@ class StaticPages
     {
         $this->output_dir = $output_dir;
         $this->activities = $activities_r;
+        $this->sections = $sections;
 
         if (! $sections) {
             return $this->putContentsFlat();
@@ -145,11 +147,16 @@ class StaticPages
 
     protected function putIndex()
     {
+        if ($this->sections) {
+            $index_html = implode("\n", $this->index_html);
+        } else {
+            $index_html = "\n<ul>\n" . implode("\n", $this->index_html) . "\n</ul>\n";
+        }
         $filename = $this->output_dir . '/' . 'index' . '.htm';
         $page = (object) [
             'name' => 'Home',  //Was: 'APPLAuD', 'Site map',
             'url'  => $this->url(''),  //Was: 'index', 'site-map'.
-            'content' => "\n<ul>\n" . implode("\n", $this->index_html) . "\n</ul>\n",
+            'content' => $index_html,
         ];
         $bytes = file_put_contents($filename, $this->html->staticHtml($page));
         return $bytes;
