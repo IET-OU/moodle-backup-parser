@@ -19,6 +19,7 @@ class StaticPages
     protected $sections   = [];
     protected $urls = [];
     protected $index_html = [];
+    protected $sideblock_html = [];
     protected $site_map   = [];
     protected $references = [];
 
@@ -50,41 +51,47 @@ class StaticPages
             $count++;
             $sequence = $section->activity_sequence;
 
-            $this->index_html[] = Html::sectionHead($section, $count);
+            $section_html = [];
+            $section_html[] = Html::sectionHead($section, $count);
 
             foreach ($sequence as $mod_id) {
                 if (! isset($activities_r[ "mid:$mod_id" ])) {
-                    throw new Exception(sprintf('Error! Ativity not found, mod ID: %s, section ID: %s', $mod_id, $section->id));
+                    throw new Exception(sprintf('Error! Activity not found, mod ID: %s, section ID: %s', $mod_id, $section->id));
                 }
 
                 $activity = $activities_r[ "mid:$mod_id" ];
 
                 switch ($activity->modulename) {
                     case 'label':
-                        $this->index_html[] = Html::wrap($activity, $activity->content);
+                        $section_html[] = Html::wrap($activity, $activity->content);
                         break;
                     case 'page':
-                        $this->putPage($activity);
+                        $section_html[] = $this->putPage($activity);
                         break;
                     case 'oublog':
                     case 'oucollaborate':  // Drop-through!
                     case 'forumng':
-                        $this->index_html[] = $this->simpleActivityLink($activity);
+                        $section_html[] = $this->simpleActivityLink($activity);
                         break;
                     default:
-                        $this->index_html[] = Html::activityPlaceholder($activity);
+                        $section_html[] = Html::activityPlaceholder($activity);
                         break;
                 }
             }
-            $this->index_html[] = Html::clean("</ul></div>\n");
+            $section_html[] = Html::clean("</ul></div>\n");
+
+            $this->assignSection($section, $section_html);
         }
 
+        var_dump(count($this->sideblock_html), count($this->index_html));
+
         $this->putIndex();
+        $this->putSideblock();
 
         return $this->putYaml();
     }
 
-    public function putContentsFlat() // LEGACY?
+    protected function putContentsFlat() // LEGACY?
     {
         foreach ($this->activities as $activity) {
             switch ($activity->modulename) {
@@ -103,6 +110,16 @@ class StaticPages
         $this->putIndex();
 
         return $this->putYaml();
+    }
+
+    protected function assignSection($section, $section_html)
+    {
+        if (isset($this->options[ 'sideblock_section_id' ])
+         && $this->options[ 'sideblock_section_id' ] === $section->id) {
+            $this->sideblock_html = array_merge($this->sideblock_html, $section_html);
+        } else {
+            $this->index_html = array_merge($this->index_html, $section_html);
+        }
     }
 
     public function putFiles($output_files_dir, $files_r)
@@ -129,10 +146,11 @@ class StaticPages
         $filename = $this->output_dir . '/' . $page->filename . '.htm';
         $bytes = file_put_contents($filename, $this->html->staticHtml($page));
         $this->urls[ $page->url ] = $page->name;
-        $this->index_html[] = Html::wrap($page, "<a href='.$page->url'>$page->name</a>");
+        $index_html = Html::wrap($page, "<a href='.$page->url'>$page->name</a>");
         $this->site_map[] = "<a href='.$page->url'>$page->name</a>";
         $this->references[] = $page->filename;
-        return $bytes;
+        return $index_html;
+        //Was: return $bytes;
     }
 
     public function getUrls()
@@ -157,6 +175,18 @@ class StaticPages
             'name' => 'Home',  //Was: 'APPLAuD', 'Site map',
             'url'  => $this->url(''),  //Was: 'index', 'site-map'.
             'content' => $index_html,
+        ];
+        $bytes = file_put_contents($filename, $this->html->staticHtml($page));
+        return $bytes;
+    }
+
+    protected function putSideblock()
+    {
+        $filename = $this->output_dir . '/' . '-sideblock' . '.htm';
+        $page = (object) [
+            'name' => 'Sideblock',
+            'url'  => $this->url('#sideblock'),
+            'content' => implode("\n", $this->sideblock_html),
         ];
         $bytes = file_put_contents($filename, $this->html->staticHtml($page));
         return $bytes;
