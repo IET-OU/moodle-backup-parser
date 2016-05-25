@@ -5,8 +5,8 @@
  *
  * Parse files within a Moodle course backup 'MBZ' archive.
  *
- * @copyright Nick Freear, 20 April 2016.
- * @copyright Copyright 2016 The Open University.
+ * @copyright © Nick Freear, 20 April 2016.
+ * @copyright © 2016 The Open University.
  * @link  https://learn3.open.ac.uk/course/view.php?name=APPLAuD2016
  * @link  https://github.com/IET-OU/nnco/blob/master/themes/nnco/content/static-pages/about.htm
  */
@@ -38,7 +38,7 @@ class Parser
 
     public function __construct()
     {
-        $this->object = new ObjectParser();
+        $this->object = ObjectParser::getInstance();
         $this->files = new FilesParser();
         $this->sections = new SectionsParser();
     }
@@ -58,6 +58,8 @@ class Parser
         if (! $this->xmlo_root) {
             throw new Exception('simplexml fail on: ' . $xml_path);
         }
+
+        $this->files->parseFiles($this->inputDir());
 
         $info = $this->xmlo_root->information;
 
@@ -81,7 +83,7 @@ class Parser
         $this->sections->parseSectionsSequences($this->inputDir(), $this->xmlo_root);
 
         $this->parseActivities();
-        $this->files->parseFiles($this->inputDir());
+
 
         return $this->getMetaData();
     }
@@ -141,6 +143,12 @@ class Parser
                     break;
                 case 'page':
                     $this->parsePage($act->directory, $mid);
+                    break;
+                case 'resource':
+                    $this->activities[ "mid:$mid" ] = $this->files->parseResource($act->directory, $modulename);
+                    break;
+                case 'url':
+                    $this->activities[ "mid:$mid" ] = $this->files->parseUrl($act->directory, $modulename);
                     break;
                 default:
                     if ($this->verbose) {

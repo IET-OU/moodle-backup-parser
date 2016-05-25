@@ -3,8 +3,8 @@
 /**
  * 'Clean' and 'safe' string utility functions.
  *
- * @copyright Nick Freear, 20 April 2016.
- * @copyright Copyright 2016 The Open University.
+ * @copyright © Nick Freear, 20 April 2016.
+ * @copyright © 2016 The Open University.
  */
 
 class Clean

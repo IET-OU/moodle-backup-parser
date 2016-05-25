@@ -3,7 +3,8 @@
 /**
  * Parser for generic 'objects' within a Moodle backup MBZ.
  *
- * @copyright Nick Freear, 20 May 2016.
+ * @copyright © Nick Freear, 20 May 2016.
+ * @copyright © 2016 The Open University.
  */
 
 class ObjectParser
@@ -12,6 +13,16 @@ class ObjectParser
     const FILE_REGEX = '/(?P<attr>(src|href))="@@PLUGINFILE@@(?P<path>[^"]+)/';
 
     protected $input_dir;
+
+    protected static $instance;
+
+    public static function getInstance()
+    {
+        if (! self::$instance) {
+            self::$instance = new ObjectParser();
+        }
+        return self::$instance;
+    }
 
     public function setInputDir($input_dir)
     {
@@ -23,10 +34,16 @@ class ObjectParser
         return $this->input_dir;
     }
 
-    public function parseObject($dir, $modtype, $content = 'intro', $extra = [])
+    public function loadXmlFile($dir, $modtype)
     {
         $xml_path = $this->input_dir . '/' . (string) $dir . '/' . $modtype . '.xml';
         $xmlo = simplexml_load_file($xml_path);
+        return $xmlo;
+    }
+
+    public function parseObject($dir, $modtype, $content = 'intro', $extra = [])
+    {
+        $xmlo = $this->loadXmlFile($dir, $modtype);
         $context = (int) $xmlo[ 'contextid' ];
         $modid = (int) $xmlo[ 'moduleid' ];
         $modname = (string) $xmlo[ 'modulename' ];

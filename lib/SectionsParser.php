@@ -3,7 +3,8 @@
 /**
  * Parser for 'section.xml' files within a Moodle backup MBZ.
  *
- * @copyright Nick Freear, 13 May 2016.
+ * @copyright © Nick Freear, 13 May 2016.
+ * @copyright © 2016 The Open University.
  */
 
 class SectionsParser

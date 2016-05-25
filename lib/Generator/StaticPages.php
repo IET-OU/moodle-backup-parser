@@ -3,7 +3,8 @@
 /**
  * Output static pages compatible with OctoberCMS.
  *
- * @copyright Nick Freear, 20 April 2016.
+ * @copyright © Nick Freear, 20 April 2016.
+ * @copyright © 2016 The Open University.
  */
 
 use Nfreear\MoodleBackupParser\Generator\Html;
@@ -11,7 +12,6 @@ use Nfreear\MoodleBackupParser\Generator\Html;
 class StaticPages
 {
     protected $options = [];
-
     protected $base = '/';
 
     protected $output_dir;
@@ -67,6 +67,9 @@ class StaticPages
                         break;
                     case 'page':
                         $section_html[] = $this->putPage($activity);
+                        break;
+                    case 'resource':
+                        $section_html[] = Html::activityResource($activity);
                         break;
                     case 'oublog':
                     case 'oucollaborate':  // Drop-through!

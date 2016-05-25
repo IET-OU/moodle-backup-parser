@@ -3,14 +3,23 @@
 /**
  * HTML helper functions, for October CMS static pages.
  *
- * @copyright Nick Freear, 17 May 2016.
+ * @copyright © Nick Freear, 17 May 2016.
+ * @copyright © 2016 The Open University.
  */
 
 use Nfreear\MoodleBackupParser\Clean;
 
 class Html
 {
+    const RESOURCE_PREFIX = '@@PLUGINRES@@';
+
     protected $wordwrap = 96;
+    protected static $icons = [
+        'doc' => '<i class="fa fa-file-word-o" aria-hidden="true"></i>',
+        'docx' => '<i class="fa fa-file-word-o" aria-hidden="true"></i>',
+        'pdf' => '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>',
+        'DEFAULT' => '<i class="fa fa-file-text-o" aria-hidden="true"></i>',
+    ];
 
     public static function sectionHead($section, $idx)
     {
@@ -25,6 +34,20 @@ class Html
         $mod_name = $activity->modulename;
         $name = $activity->name;
         return self::wrap($activity, "<i>$mod_name</i> $name", 'mod-placeholder', 'Placeholder');
+    }
+
+    public static function activityResource($resource)
+    {
+        $file = $resource->file;
+        $ext = $file->fileext;
+        $pre = self::RESOURCE_PREFIX;
+        $icon = self::getFontIcon($ext);
+        return self::wrap($resource, "<a href='$pre/$file->filepath'>$icon$resource->name</a>", "ext-$ext");
+    }
+
+    public static function getFontIcon($type)
+    {
+        return isset(self::$icons[ $type ]) ? self::$icons[ $type ] : self::$icons[ 'DEFAULT' ];
     }
 
     public static function wrap($activity, $text, $cls = null, $title = null)
