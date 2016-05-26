@@ -32,14 +32,14 @@ class Parser
     protected $pages = [];
     protected $activities = []; // THE sequence.
     protected $object;
-    protected $files;
+    protected $resource;
     protected $sections;
     protected $verbose = false;
 
     public function __construct()
     {
         $this->object = ObjectParser::getInstance();
-        $this->files = new FilesParser();
+        $this->resource = new FilesParser();
         $this->sections = new SectionsParser();
     }
 
@@ -59,7 +59,7 @@ class Parser
             throw new Exception('simplexml fail on: ' . $xml_path);
         }
 
-        $this->files->parseFiles($this->inputDir());
+        $this->resource->parseFiles($this->inputDir());
 
         $info = $this->xmlo_root->information;
 
@@ -67,7 +67,7 @@ class Parser
             'name' => (string) $info->name,
             'moodle_release' => (string) $info->moodle_release,
             'backup_release' => (string) $info->backup_release,
-            'backup_date' => date('c', (int) $info->backup_date), # Unix timestamp;
+            'backup_date' => gmdate('c', (int) $info->backup_date), # Unix timestamp;
             'wwwroot'     => (string) $info->original_wwwroot,
             'site_id'     => (string) $info->original_site_identifier_hash,
             'course_id'   => (int) $info->original_course_id,
@@ -98,7 +98,7 @@ class Parser
 
     public function getFiles()
     {
-        return $this->files->getFiles();
+        return $this->resource->getFiles();
     }
 
     public function getSections()
@@ -145,10 +145,10 @@ class Parser
                     $this->parsePage($act->directory, $mid);
                     break;
                 case 'resource':
-                    $this->activities[ "mid:$mid" ] = $this->files->parseResource($act->directory, $modulename);
+                    $this->activities[ "mid:$mid" ] = $this->resource->parseResource($act->directory, $modulename);
                     break;
                 case 'url':
-                    $this->activities[ "mid:$mid" ] = $this->files->parseUrl($act->directory, $modulename);
+                    $this->activities[ "mid:$mid" ] = $this->resource->parseUrl($act->directory, $modulename);
                     break;
                 default:
                     if ($this->verbose) {

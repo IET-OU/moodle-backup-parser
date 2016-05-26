@@ -17,10 +17,8 @@ class StaticPages
     protected $output_dir;
     protected $activities = [];
     protected $sections   = [];
-    protected $urls = [];
     protected $index_html = [];
     protected $sideblock_html = [];
-    protected $site_map   = [];
     protected $references = [];
 
     protected $html;
@@ -66,10 +64,13 @@ class StaticPages
                         $section_html[] = Html::wrap($activity, $activity->content);
                         break;
                     case 'page':
-                        $section_html[] = $this->putPage($activity);
+                        $section_html[] = $this->putPageActivity($activity);
                         break;
                     case 'resource':
                         $section_html[] = Html::activityResource($activity);
+                        break;
+                    case 'url':
+                        $section_html[] = $this->putUrlActivity($activity);
                         break;
                     case 'oublog':
                     case 'oucollaborate':  // Drop-through!
@@ -143,22 +144,30 @@ class StaticPages
         return Html::wrap($activity, "<a href='$url'>$name</a>");
     }
 
-    protected function putPage($page)
+    protected function putPageActivity($page)
     {
         $page->url = $this->url($page->filename);
         $filename = $this->output_dir . '/' . $page->filename . '.htm';
         $bytes = file_put_contents($filename, $this->html->staticHtml($page));
-        $this->urls[ $page->url ] = $page->name;
         $index_html = Html::wrap($page, "<a href='.$page->url'>$page->name</a>");
-        $this->site_map[] = "<a href='.$page->url'>$page->name</a>";
         $this->references[] = $page->filename;
+
         return $index_html;
-        //Was: return $bytes;
     }
 
-    public function getUrls()
+    protected function putUrlActivity($url)
     {
-        return $this->urls;
+        if ($url->embed) {
+            $url->url = $this->url($url->filename);
+            $filename = $this->output_dir . '/' . $url->filename . '.htm';
+            $bytes = file_put_contents($filename, $this->html->staticHtml($url));
+
+            $index_html = Html::wrap($url, "<a href='.$url->url'>$url->name</a>");
+            $this->references[] = $url->filename;
+        } else {
+            $index_html = Html::wrap($url, "<a href='$url->resolve_url'>$url->name</a>");
+        }
+        return $index_html;
     }
 
     protected function url($filename)
@@ -199,7 +208,7 @@ class StaticPages
     {
         $filename = $this->output_dir . '/' . '-static-pages.yaml';
 
-        $yml_pre = "# Auto-generated:  " . date('c') .
+        $yml_pre = "# Auto-generated:  " . gmdate('c') .
             "\n\nstatic-pages:\n    index: { }\n    ";
         $yml_post = ": { }\n\n#End.\n";
         $yml_join = ": { }\n    ";

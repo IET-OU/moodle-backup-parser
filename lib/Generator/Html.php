@@ -67,7 +67,7 @@ class Html
           $content = $page->content;
           $html = Clean::html($content);
           unset($page->content);
-          $page->file_date = date('c');
+          $page->file_date = gmdate('c');
           $template = <<<EOT
 [viewBag]
 title = "%title"

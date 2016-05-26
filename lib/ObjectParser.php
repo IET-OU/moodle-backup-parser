@@ -58,7 +58,7 @@ class ObjectParser
             'intro' => (string) $xmlo->intro,
             'content' => $content ? (string) html_entity_decode($xmlo->{ $content }) : null,
             'contentformat' => $content ? (int) $xmlo->{ $content . 'format' } : null,
-            'timemodified' => date('c', (int) $xmlo->timemodified),
+            'timemodified' => gmdate('c', (int) $xmlo->timemodified),
             'links' => $this->parseLinks((string) $xmlo->{ $content }),
             'files' => $this->parseFileLinks((string) $xmlo->{ $content }),
         ];

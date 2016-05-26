@@ -50,7 +50,7 @@ class FilesParser
                 'hashpath' => $this->input_dir . '/files/' . substr($hash, 0, 2) . '/' . $hash,
                 'mimetype' => (string) $file->mimetype,
                 'filesize' => (int) $file->filesize,
-                'timemodified' => date('c', (int) $file->timemodified),
+                'timemodified' => gmdate('c', (int) $file->timemodified),
             ];
         }
         $this->files = $files;
@@ -85,8 +85,9 @@ class FilesParser
         if (preg_match(self::YOUTUBE_REGEX, $url->externalurl, $matches)) {
             $url->embed = sprintf(self::YOUTUBE_EMBED, $matches[ 'id' ]);
         }
+        $url_page_template = '%1$s <div class="intro">%2$s</div>';
+        $url->content = sprintf($url_page_template, $url->embed, $url->intro);
 
-        //var_dump("URL:", $url); //exit;
         return $url;
     }
 
