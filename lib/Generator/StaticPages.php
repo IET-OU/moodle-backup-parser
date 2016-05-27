@@ -66,6 +66,9 @@ class StaticPages
                     case 'page':
                         $section_html[] = $this->putPageActivity($activity);
                         break;
+                    case 'folder':
+                        $section_html[] = $this->putFolderActivity($activity);
+                        break;
                     case 'resource':
                         $section_html[] = Html::activityResource($activity);
                         break;
@@ -151,6 +154,29 @@ class StaticPages
         $bytes = file_put_contents($filename, $this->html->staticHtml($page));
         $index_html = Html::wrap($page, "<a href='.$page->url'>$page->name</a>");
         $this->references[] = $page->filename;
+
+        return $index_html;
+    }
+
+    protected function putFolderActivity($folder)
+    {
+        $folder_files = $folder->files;
+        $folder_html  = [];
+
+        foreach ($folder_files as $file) {
+            $prefix = '@@PLUGINFILE@@';
+            $folder_html[] = "<li><a href='$prefix/$file->filepath'>$file->filename</a>";
+        }
+
+        $folder_page_template = '<div class="intro">%s</div> <ul class="folder-files">%s</ul>';
+        $folder->content = sprintf($folder_page_template, $folder->intro, implode("\n", $folder_html));
+
+        $folder->url = $this->url($folder->filename);
+        $filename = $this->output_dir . '/' . $folder->filename . '.htm';
+        $bytes = file_put_contents($filename, $this->html->staticHtml($folder));
+
+        $index_html = Html::wrap($folder, "<a href='.$folder->url'>$folder->name</a>");
+        $this->references[] = $folder->filename;
 
         return $index_html;
     }

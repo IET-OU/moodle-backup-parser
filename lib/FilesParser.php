@@ -56,13 +56,30 @@ class FilesParser
         $this->files = $files;
     }
 
+    public function parseFolder($dir, $mid)
+    {
+        $folder = $this->object->parseObject($dir, 'folder', null);
+        $xmlo = $this->object->loadXmlFile($dir, 'inforef');
+
+        $folder_files = [];
+
+        foreach ($xmlo->fileref->file as $ref) {
+            $file_id = (int) $ref->id;
+            if (isset($this->files[ "fid:$file_id" ])) {
+                $folder_files[] = $this->files[ "fid:$file_id" ];
+            }
+        }
+        $folder->files = $folder_files;
+
+        return $folder;
+    }
+
     public function parseResource($dir, $mid)
     {
         $resource = $this->object->parseObject($dir, 'resource', null);
         $xmlo = $this->object->loadXmlFile($dir, 'inforef');
-        $file_ids = $xmlo->fileref->file->id;
-        foreach ($file_ids as $id) {
-            $file_id = (int) $id;
+        foreach ($xmlo->fileref->file as $ref) {
+            $file_id = (int) $ref->id;
             if (isset($this->files[ "fid:$file_id" ])) {  // Use the first match!
                 $resource->file = $this->files[ "fid:$file_id" ];
                 break;

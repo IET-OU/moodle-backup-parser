@@ -144,6 +144,9 @@ class Parser
                 case 'page':
                     $this->parsePage($act->directory, $mid);
                     break;
+                case 'folder':
+                    $this->activities[ "mid:$mid" ] = $this->resource->parseFolder($act->directory, $modulename);
+                    break;
                 case 'resource':
                     $this->activities[ "mid:$mid" ] = $this->resource->parseResource($act->directory, $modulename);
                     break;
