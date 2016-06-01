@@ -20,6 +20,7 @@ class Html
         'pdf' => '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>',
         'DEFAULT' => '<i class="fa fa-file-text-o" aria-hidden="true"></i>',
     ];
+    protected $replacements = [];
 
     public static function sectionHead($section, $idx)
     {
@@ -62,10 +63,24 @@ class Html
         return Clean::html($html);
     }
 
+    public function setReplacements($replace_r)
+    {
+        printf("Set replacements: %s\n", json_encode($replace_r, JSON_PRETTY_PRINT));
+        $this->replacements = $replace_r;
+    }
+
+    public function replace($html)
+    {
+        $patterns = array_keys($this->replacements);
+        $replacements = array_values($this->replacements);
+        return preg_replace($patterns, $replacements, $html);
+    }
+
     public function staticHtml($page)
     {
           $content = $page->content;
           $html = Clean::html($content);
+          $html = $this->replace($html);
           unset($page->content);
           $page->file_date = gmdate('c');
           $template = <<<EOT

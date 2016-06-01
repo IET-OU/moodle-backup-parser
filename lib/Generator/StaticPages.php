@@ -32,6 +32,7 @@ class StaticPages
     {
         printf("Set options: %s\n", json_encode($options, JSON_PRETTY_PRINT));
         $this->options = $options;
+        $this->html->setReplacements($options[ 'preg_replace_html' ]);
     }
 
     public function putContents($output_dir, $activities_r, $sections = null)
