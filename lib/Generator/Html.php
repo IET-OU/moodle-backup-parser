@@ -21,6 +21,7 @@ class Html
         'DEFAULT' => '<i class="fa fa-file-text-o" aria-hidden="true"></i>',
     ];
     protected $replacements = [];
+    protected $metadata;
 
     public static function sectionHead($section, $idx)
     {
@@ -63,6 +64,11 @@ class Html
         return Clean::html($html);
     }
 
+    public function setMetaData($metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
     public function setReplacements($replace_r)
     {
         printf("Set replacements: %s\n", json_encode($replace_r, JSON_PRETTY_PRINT));
@@ -83,6 +89,12 @@ class Html
           $html = $this->replace($html);
           unset($page->content);
           $page->file_date = gmdate('c');
+
+          if ($this->metadata) {
+              $page->backup_name = $this->metadata->name;
+              $page->backup_date = $this->metadata->backup_date;
+              $page->source_url  = $this->metadata->course_url;
+          }
           $template = <<<EOT
 [viewBag]
 title = "%title"
@@ -105,11 +117,17 @@ about
 <div id="mbp-pg-content" class="%className" data-uri="%url">
 %html
 </div>
+
+EOT;
+        if (FALSE === strpos($page->url, 'sideblock')) {
+            $template .= <<<EOT
 <script id="mbp-pg-data" type="application/json">
 %json
 </script>
 
 EOT;
+        }
+
         return strtr($template, [
             '%className' => isset($page->modulename) ? "pg-mod-$page->modulename" : 'pg-other',
             '%title'=> $page->name,

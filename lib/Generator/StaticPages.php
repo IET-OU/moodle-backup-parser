@@ -35,6 +35,11 @@ class StaticPages
         $this->html->setReplacements($options[ 'preg_replace_html' ]);
     }
 
+    public function setMetaData($metadata)
+    {
+        return $this->html->setMetaData($metadata);
+    }
+
     public function putContents($output_dir, $activities_r, $sections = null)
     {
         $this->output_dir = $output_dir;

@@ -63,7 +63,7 @@ class Parser
 
         $info = $this->xmlo_root->information;
 
-        $this->metadata = (object) [
+        $metadata = (object) [
             'name' => (string) $info->name,
             'moodle_release' => (string) $info->moodle_release,
             'backup_release' => (string) $info->backup_release,
@@ -79,6 +79,9 @@ class Parser
             'backup_type' => (string) $info->details->detail->type,  # 'course'
             'backup_format' => (string) $info->details->detail->format,
         ];
+        $metadata->course_url = sprintf('%s/course/view.php?id=%s', $metadata->wwwroot, $metadata->course_id);
+
+        $this->metadata = $metadata;
 
         $this->sections->parseSectionsSequences($this->inputDir(), $this->xmlo_root);
 
