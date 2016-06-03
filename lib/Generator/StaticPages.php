@@ -96,10 +96,6 @@ class StaticPages
                     case 'url':
                         $section_html[] = $this->putUrlActivity($activity);
                         break;
-                    case 'X_oublog':
-                    case 'X_oucollaborate':  // Drop-through!
-                        $section_html[] = $this->simpleActivityLink($activity);
-                        break;
                     default:
                         $section_html[] = Html::activityPlaceholder($activity);
                         break;
@@ -177,14 +173,6 @@ class StaticPages
             return Html::wrap($activity, "<a href='$url'>$activity->name</a>");
         }
         return null;
-    }
-
-    protected function X_simpleActivityLink($activity)  // Legacy!
-    {
-        $name = $activity->name;
-        $url_format = $this->options[ $activity->modulename . '_url' ];
-        $url = sprintf($url_format, $activity->moduleid);
-        return Html::wrap($activity, "<a href='$url'>$name</a>");
     }
 
     protected function putPageActivity($page)

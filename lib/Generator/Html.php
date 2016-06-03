@@ -109,18 +109,18 @@ class Html
 
     public function staticHtml($page)
     {
-          $content = $page->content;
-          $html = Clean::html($content);
-          $html = $this->replace($html);
-          unset($page->content);
-          $page->file_date = gmdate('c');
+        $content = $page->content;
+        $html = Clean::html($content);
+        $html = $this->replace($html);
+        unset($page->content);
+        $page->file_date = gmdate('c');
 
-          if ($this->metadata) {
-              $page->backup_name = $this->metadata->name;
-              $page->backup_date = $this->metadata->backup_date;
-              $page->source_url  = $this->metadata->course_url;
-          }
-          $template = <<<EOT
+        if ($this->metadata) {
+            $page->backup_name = $this->metadata->name;
+            $page->backup_date = $this->metadata->backup_date;
+            $page->source_url  = $this->metadata->course_url;
+        }
+        $template = <<<EOT
 [viewBag]
 title = "%title"
 url = "%url"
@@ -144,7 +144,7 @@ about
 </div>
 
 EOT;
-        if (FALSE === strpos($page->url, 'sideblock')) {
+        if (false === strpos($page->url, 'sideblock')) {
             $template .= <<<EOT
 <script id="mbp-pg-data" type="application/json">
 %json
