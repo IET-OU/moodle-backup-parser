@@ -12,14 +12,22 @@ use Nfreear\MoodleBackupParser\Clean;
 class Html
 {
     const RESOURCE_PREFIX = '@@PLUGINRES@@';
+    const ICON_HTML = '<i class="fa %s" aria-hidden="true"></i>';
 
     protected $wordwrap = 96;
     protected static $icons = [
-        'doc' => '<i class="fa fa-file-word-o" aria-hidden="true"></i>',
-        'docx' => '<i class="fa fa-file-word-o" aria-hidden="true"></i>',
-        'pdf' => '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>',
-        'DEFAULT' => '<i class="fa fa-file-text-o" aria-hidden="true"></i>',
+        // File resource types.
+        'doc'  => 'fa-file-word-o',
+        'docx' => 'fa-file-word-o',
+        'pdf'  => 'fa-file-pdf-o',
+        'DEFAULT' => 'fa-file-text-o',
+
+        // Activity module types.
+        'folder'  => 'fa-folder-open-o',
+        //...
+        'url embed' => 'fa-video-camera',
     ];
+    protected static $icon_html = self::ICON_HTML;
     protected $replacements = [];
     protected $metadata;
 
@@ -43,20 +51,37 @@ class Html
         $file = $resource->file;
         $ext = $file->fileext;
         $pre = self::RESOURCE_PREFIX;
-        $icon = self::getFontIcon($ext);
-        return self::wrap($resource, "<a href='$pre/$file->filepath'>$icon$resource->name</a>", "ext-$ext");
+        $icon = self::getResourceIcon($ext);
+        return self::wrap($resource, "<a href='$pre/$file->filepath'>$icon$resource->name</a>", "ext-$ext", null, false);
+    }
+
+    public function setIconMap($icon_map, $icon_html = self::ICON_HTML)
+    {
+        self::$icons = $icon_map;
+        self::$icon_html = $icon_html;
+    }
+
+    public static function getResourceIcon($type)
+    {
+        $icon_class = isset(self::$icons[ $type ]) ? self::$icons[ $type ] : self::$icons[ 'DEFAULT' ];
+        return sprintf(self::$icon_html, $icon_class);
     }
 
     public static function getFontIcon($type)
     {
-        return isset(self::$icons[ $type ]) ? self::$icons[ $type ] : self::$icons[ 'DEFAULT' ];
+        $icon_class = isset(self::$icons[ $type ]) ? self::$icons[ $type ] : null;
+        return $icon_class ? sprintf(self::$icon_html, $icon_class) : '';
     }
 
-    public static function wrap($activity, $text, $cls = null, $title = null)
+    public static function wrap($activity, $text, $cls = null, $title = null, $add_icon = true)
     {
         $mod_name = $activity->modulename;
         $mod_id   = $activity->moduleid;
-        return Clean::html("<li class='mod-$mod_name $cls' data-mid='$mod_id' title='$title'>$text</li>");
+        $icon_type = $cls ? "$mod_name $cls" : $mod_name;
+        $icon  = $add_icon ? self::getFontIcon($icon_type) : '';
+        $ptext = preg_replace('/(<[ap][^>]*>)/', '$1' . $icon, $text, 1, $count);
+        $ptext = 0 === $count ? $icon . $text : $ptext;
+        return Clean::html("<li class='mod-$mod_name $cls' data-mid='$mod_id' title='$title'>$ptext</li>");
     }
 
     public static function clean($html)

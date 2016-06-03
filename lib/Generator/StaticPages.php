@@ -36,6 +36,7 @@ class StaticPages
         printf("Set options: %s\n", json_encode($options, JSON_PRETTY_PRINT));
         $this->options = $options;
         $this->html->setReplacements($options[ 'preg_replace_html' ]);
+        $this->html->setIconMap($options[ 'font_icon_map' ]);
     }
 
     public function setMetaData($metadata)
@@ -227,7 +228,7 @@ class StaticPages
             $filename = $this->output_dir . '/' . $url->filename . '.htm';
             $bytes = file_put_contents($filename, $this->html->staticHtml($url));
 
-            $index_html = Html::wrap($url, "<a href='.$url->url'>$url->name</a>");
+            $index_html = Html::wrap($url, "<a href='.$url->url'>$url->name</a>", 'embed');
             $this->references[] = $url->filename;
         } else {
             $index_html = Html::wrap($url, "<a href='$url->resolve_url'>$url->name</a>");
