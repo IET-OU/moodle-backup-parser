@@ -11,6 +11,9 @@ use Nfreear\MoodleBackupParser\Generator\Html;
 
 class StaticPages
 {
+    const MOD_TREAT_AS_PAGE = 'X_SWITCH_TREAT_AS_PAGE';
+    const MOD_IS_SIMPLE_ACTIVITY = 'X_IS_SIMPLE_ACTIVITY';
+
     protected $options = [];
     protected $base = '/';
 
@@ -64,12 +67,23 @@ class StaticPages
                 }
 
                 $activity = $activities_r[ "mid:$mod_id" ];
+                $modname  = $activity->modulename;
 
-                switch ($activity->modulename) {
+                $try_html = $this->trySimpleActivityLink($activity);
+                if ($try_html) {
+                    $modname = self::MOD_IS_SIMPLE_ACTIVITY;
+                }
+
+                switch ($this->switchExt($modname)) {
+                    case self::MOD_IS_SIMPLE_ACTIVITY:
+                        $section_html[] = $try_html;
+                        break;
                     case 'label':
                         $section_html[] = Html::wrap($activity, $activity->content);
                         break;
                     case 'page':
+                    case self::MOD_TREAT_AS_PAGE:  // Drop-through!
+                    #Was: case 'subpage':
                         $section_html[] = $this->putPageActivity($activity);
                         break;
                     case 'folder':
@@ -81,9 +95,8 @@ class StaticPages
                     case 'url':
                         $section_html[] = $this->putUrlActivity($activity);
                         break;
-                    case 'oublog':
-                    case 'oucollaborate':  // Drop-through!
-                    case 'forumng':
+                    case 'X_oublog':
+                    case 'X_oucollaborate':  // Drop-through!
                         $section_html[] = $this->simpleActivityLink($activity);
                         break;
                     default:
@@ -102,6 +115,12 @@ class StaticPages
         $this->putSideblock();
 
         return $this->putYaml();
+    }
+
+    protected function switchExt($modname)
+    {
+        $treat_as_page = $this->options[ 'treat_as_page' ];
+        return in_array($modname, $treat_as_page) ? self::MOD_TREAT_AS_PAGE : $modname;
     }
 
     protected function putContentsFlat() // LEGACY?
@@ -145,7 +164,21 @@ class StaticPages
         return $count;
     }
 
-    protected function simpleActivityLink($activity)
+
+
+    protected function trySimpleActivityLink($activity)
+    {
+        $sa_config = $this->options[ 'simple_activity_link' ];
+        $modname = $activity->modulename;
+        if (isset($sa_config[ $modname ])) {
+            $url_format = $sa_config[ $modname ][ 'url' ];
+            $url = sprintf($url_format, $activity->moduleid);
+            return Html::wrap($activity, "<a href='$url'>$activity->name</a>");
+        }
+        return null;
+    }
+
+    protected function X_simpleActivityLink($activity)  // Legacy!
     {
         $name = $activity->name;
         $url_format = $this->options[ $activity->modulename . '_url' ];

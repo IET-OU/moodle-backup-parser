@@ -27,7 +27,6 @@ class Parser
     const MBZ_FILE_REGEX = '/^backup-moodle2-course-\d+-\w+-20\d{6}-\d{4}-nu\.mbz$/';
 
     protected $xmlo_root;
-    protected $first_ordered;
     protected $metadata;
     protected $pages = [];
     protected $activities = []; // THE sequence.
@@ -47,10 +46,9 @@ class Parser
      * @param string Parse the MBZ contents of the input directory.
      * @return object Meta-data.
      */
-    public function parse($input_dir, $first_ordered = null)
+    public function parse($input_dir)
     {
         $this->object->setInputDir($input_dir);
-        $this->first_ordered = (object) $first_ordered;
 
         $xml_path = $this->inputDir() . self::ROOT_XML_FILE;
         $this->xmlo_root = simplexml_load_file($xml_path);
@@ -137,15 +135,14 @@ class Parser
         foreach ($activities as $act) {
             $modulename = (string) $act->modulename;
             $mid = (int) $act->moduleid;
-            /*if ($act->title === $this->first_ordered->title) {
-                break;
-            }*/
+
             switch ($modulename) {
                 case 'label':
                     $this->parseLabel($act->directory, $mid);
                     break;
+                case 'subpage':  // Drop-through!
                 case 'page':
-                    $this->parsePage($act->directory, $mid);
+                    $this->parsePage($act->directory, $mid, $modulename);
                     break;
                 case 'folder':
                     $this->activities[ "mid:$mid" ] = $this->resource->parseFolder($act->directory, $modulename);
@@ -171,9 +168,9 @@ class Parser
         $this->activities[ "mid:$mid" ] = $this->object->parseObject($dir, 'label', 'intro');
     }
 
-    protected function parsePage($dir, $mid)
+    protected function parsePage($dir, $mid, $modname)
     {
-        $page = $this->object->parseObject($dir, 'page', 'content', [ 'revision', 'displayoptions' ]);
+        $page = $this->object->parseObject($dir, $modname, 'content', [ 'revision', 'displayoptions' ]);
         $this->pages[] = $this->activities[ "mid:$mid" ] = $page;
     }
 }
