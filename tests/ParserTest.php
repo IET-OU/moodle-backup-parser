@@ -26,6 +26,12 @@ class ParserTest extends TestCaseExtended
         'modulename' => 'page',
         'title' => 'Is APPLAuD for me?',
     ];
+    protected static $generator_options = [
+        'simple_activity_link' => [ ],
+        'preg_replace_html' => [ ],
+        'font_icon_map' => [ ],
+        'treat_as_page' => [ ],
+    ];
     protected static $verbose = false;
 
     public function setup()
@@ -95,6 +101,10 @@ class ParserTest extends TestCaseExtended
         $this->parser->parse(TEST_INPUT_DIR);
         $activities = $this->parser->getActivities();
         $sections   = $this->parser->getSections();
+        $metadata   = $this->parser->getMetaData();
+
+        $generator->setOptions(self::$generator_options);
+        $generator->setMetaData($metadata);
         $result = $generator->putContents(TEST_OUTPUT_DIR, $activities, $sections);
 
         printf("Handled activities:  %s\n", count($activities));
