@@ -16,6 +16,7 @@ class StaticPages
 
     protected $options = [];
     protected $base = '/';
+    protected $verbose = false;
 
     protected $output_dir;
     protected $activities = [];
@@ -31,9 +32,16 @@ class StaticPages
         $this->html = new Html();
     }
 
+    public function setVerbose()
+    {
+        $this->verbose = true;
+    }
+
     public function setOptions($options)
     {
-        printf("Set options: %s\n", json_encode($options, JSON_PRETTY_PRINT));
+        if ($this->isVerbose()) {
+            printf("Set options: %s\n", json_encode($options, JSON_PRETTY_PRINT));
+        }
         $this->options = $options;
         $this->html->setReplacements($options[ 'preg_replace_html' ]);
         $this->html->setIconMap($options[ 'font_icon_map' ]);
@@ -109,13 +117,19 @@ class StaticPages
 
             $this->assignSection($section, $section_html);
         }
-
-        var_dump(count($this->sideblock_html), count($this->index_html));
+        if ($this->isVerbose()) {
+            var_dump(count($this->sideblock_html), count($this->index_html));
+        }
 
         $this->putIndex();
         $this->putSideblock();
 
         return $this->putYaml();
+    }
+
+    public function isVerbose()
+    {
+        return $this->verbose;
     }
 
     protected function switchExt($modname)

@@ -96,7 +96,6 @@ class Html
 
     public function setReplacements($replace_r)
     {
-        printf("Set replacements: %s\n", json_encode($replace_r, JSON_PRETTY_PRINT));
         $this->replacements = $replace_r;
     }
 
