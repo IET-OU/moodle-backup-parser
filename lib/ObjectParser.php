@@ -13,6 +13,7 @@ class ObjectParser
     const FILE_REGEX = '/(?P<attr>(src|href))="@@PLUGINFILE@@(?P<path>[^"]+)/';
 
     protected $input_dir;
+    protected $uri_references = [];
 
     protected static $instance;
 
@@ -49,7 +50,7 @@ class ObjectParser
         $modname = (string) $xmlo[ 'modulename' ];
         $xmlo = $xmlo->{ $modtype };
 
-        $object = [
+        $object = (object) [
             'id' => (int) $xmlo[ 'id' ],
             'moduleid' => $modid,
             'modulename' => $modname,
@@ -63,9 +64,28 @@ class ObjectParser
             'files' => $this->parseFileLinks((string) $xmlo->{ $content }),
         ];
         foreach ($extra as $key) {
-            $object[ $key ] = (string) $xmlo->{ $key };
+            $object->{ $key } = (string) $xmlo->{ $key };
         }
-        return (object) $object;
+        $this->addUriReference($object);
+
+        return $object;
+    }
+
+    protected function addURIReference($activity)
+    {
+        if ('label' === $activity->modulename) {
+            //return;
+        }
+        if (in_array($activity->modulename, [ 'page', 'folder', 'url' ])) {
+            $key = sprintf('$@%sVIEWBYID*%d@$', strtoupper($activity->modulename), $activity->moduleid);
+            $this->uri_references[ $key ] = $activity->filename;
+        }
+        return $activity;
+    }
+
+    public function getURIReferences()
+    {
+        return $this->uri_references;
     }
 
     /**

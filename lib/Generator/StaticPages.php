@@ -52,6 +52,14 @@ class StaticPages
         return $this->html->setMetaData($metadata);
     }
 
+    public function setURIReferences($references)
+    {
+        if ($this->isVerbose()) {
+            printf("URI references: %s\n", print_r($references, true));
+        }
+        return $this->html->setURIReferences($references);
+    }
+
     public function putContents($output_dir, $activities_r, $sections = null)
     {
         $this->output_dir = $output_dir;
@@ -176,7 +184,6 @@ class StaticPages
     }
 
 
-
     protected function trySimpleActivityLink($activity)
     {
         $sa_config = $this->options[ 'simple_activity_link' ];
@@ -283,10 +290,5 @@ class StaticPages
 
         $bytes = file_put_contents($filename, $yml_pre . implode($yml_join, $this->references) . $yml_post);
         return $bytes;
-    }
-
-    protected function expandLinks($page)
-    {
-        //TODO: E.g. is-applaud-for-me.htm
     }
 }

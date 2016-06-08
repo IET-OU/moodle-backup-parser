@@ -89,6 +89,11 @@ class Parser
         return $this->getMetaData();
     }
 
+    public function getURIReferences()
+    {
+        return $this->object->getURIReferences();
+    }
+
     /**
      * @return object
      */

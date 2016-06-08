@@ -29,6 +29,7 @@ class Html
     ];
     protected static $icon_html = self::ICON_HTML;
     protected $replacements = [];
+    protected $uri_references = [];
     protected $metadata;
 
     public static function sectionHead($section, $idx)
@@ -99,6 +100,24 @@ class Html
         $this->replacements = $replace_r;
     }
 
+    public function setURIReferences($references)
+    {
+        $regex_references = [];
+        foreach ($references as $pattern => $path) {
+            $regex = sprintf('/"(%s)"/', preg_quote($pattern));
+            $uri = sprintf('"./%s" data-uri="$1"', $path);
+            $regex_references[ $regex ] = $uri;
+        }
+        $this->uri_references = $regex_references;
+    }
+
+    protected function expandURIsInHtml($html)
+    {
+        $patterns = array_keys($this->uri_references);
+        $replacements = array_values($this->uri_references);
+        return preg_replace($patterns, $replacements, $html);
+    }
+
     public function replace($html)
     {
         $patterns = array_keys($this->replacements);
@@ -111,7 +130,9 @@ class Html
         $content = $page->content;
         $html = Clean::html($content);
         $html = $this->replace($html);
+        $html = $this->expandURIsInHtml($html);
         unset($page->content);
+        unset($page->intro);
         $page->file_date = gmdate('c');
 
         if ($this->metadata) {
