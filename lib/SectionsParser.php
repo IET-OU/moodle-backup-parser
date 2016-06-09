@@ -49,6 +49,7 @@ class SectionsParser
                 'id' => $section_id,
                 'week_id'  => (int) $sp->week[ 'id' ],
                 'title'    => $sp ? (string) $sp->week->title : null,
+                'is_on_course_home_page' => ($sp && (string) $sp->week->title),
                 'activity_sequence' => $sequence_r,
             ];
             foreach ($sequence_r as $activity_mid) {

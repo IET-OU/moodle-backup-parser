@@ -23,6 +23,7 @@ class StaticPages
     protected $sections   = [];
     protected $index_html = [];
     protected $sideblock_html = [];
+    protected $other_html = [];
     protected $references = [];
 
     protected $html;
@@ -168,8 +169,12 @@ class StaticPages
         if (isset($this->options[ 'sideblock_section_id' ])
          && $this->options[ 'sideblock_section_id' ] === $section->id) {
             $this->sideblock_html = array_merge($this->sideblock_html, $section_html);
-        } else {
+        }
+        elseif ($section->is_on_course_home_page) {
             $this->index_html = array_merge($this->index_html, $section_html);
+        } else {
+            // Section on a sub-page, or similar!
+            $this->other_html = array_merge($this->other_html, $section_html);
         }
     }
 
