@@ -46,6 +46,9 @@ class StaticPages
         $this->options = $options;
         $this->html->setReplacements($options[ 'preg_replace_html' ]);
         $this->html->setIconMap($options[ 'font_icon_map' ]);
+        if (isset($options[ 'abbreviations' ])) {
+            $this->html->setAbbreviations($options[ 'abbreviations' ]);
+        }
     }
 
     public function setMetaData($metadata)
@@ -59,6 +62,14 @@ class StaticPages
             printf("URI references: %s\n", print_r($references, true));
         }
         return $this->html->setURIReferences($references);
+    }
+
+    public function setAbbreviations($abbr_array)
+    {
+        if ($this->isVerbose()) {
+            printf("Abbreviations: %s\n", print_r($abbr_array, true));
+        }
+        return $this->html->setAbbreviations($abbr_array);
     }
 
     public function putContents($output_dir, $activities_r, $sections = null)

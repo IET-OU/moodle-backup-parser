@@ -8,6 +8,7 @@
  */
 
 use Nfreear\MoodleBackupParser\Clean;
+use Nfreear\MoodleBackupParser\Generator\AbbrHtml;
 
 class Html
 {
@@ -111,6 +112,11 @@ class Html
         $this->uri_references = $regex_references;
     }
 
+    public function setAbbreviations($abbr_array)
+    {
+        return AbbrHtml::setAbbreviations($abbr_array);
+    }
+
     protected function expandURIsInHtml($html)
     {
         $patterns = array_keys($this->uri_references);
@@ -131,6 +137,8 @@ class Html
         $html = Clean::html($content);
         $html = $this->replace($html);
         $html = $this->expandURIsInHtml($html);
+        $html = $this->wordwrap ? wordwrap($html, $this->wordwrap) : $html;
+        $html = AbbrHtml::abbr($html);
         unset($page->content);
         unset($page->intro);
         $page->file_date = gmdate('c');
@@ -177,7 +185,7 @@ EOT;
             '%className' => isset($page->modulename) ? "pg-mod-$page->modulename" : 'pg-other',
             '%title'=> $page->name,
             '%url'  => $page->url,
-            '%html' => $this->wordwrap ? wordwrap($html, $this->wordwrap) : $html,
+            '%html' => $html,
             '%json' => json_encode($page, JSON_PRETTY_PRINT),
         ]);
     }
