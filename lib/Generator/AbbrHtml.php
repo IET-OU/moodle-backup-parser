@@ -12,13 +12,13 @@ class AbbrHtml
     protected static $abbr = [];
     protected static $definitions = [];
 
-    public static function setAbbreviations($abbr_array, $quote = false)
+    public static function setAbbreviations($abbr_array, $preg_quote = false)
     {
         foreach ($abbr_array as $abbr => $definition) {
-            $abbr = $quote ? preg_quote($abbr) : $abbr;
+            $abbr = $preg_quote ? preg_quote($abbr) : $abbr;
             $definition = htmlentities($definition);
-            self::$abbr[] = '/([>\s])' . $abbr . '([,;\?\.\s<])/';
-            self::$definitions[] = "$1<abbr title='$definition'>$abbr</abbr>$2";
+            self::$abbr[] = '/([>\s])(' . $abbr . ')([,;\?\.\s<])/';
+            self::$definitions[] = "$1<abbr title='$definition'>$2</abbr>$3";
         }
     }
 

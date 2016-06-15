@@ -112,9 +112,9 @@ class Html
         $this->uri_references = $regex_references;
     }
 
-    public function setAbbreviations($abbr_array)
+    public function setAbbreviations($abbr_array, $preg_quote = false)
     {
-        return AbbrHtml::setAbbreviations($abbr_array);
+        return AbbrHtml::setAbbreviations($abbr_array, $preg_quote);
     }
 
     protected function expandURIsInHtml($html)

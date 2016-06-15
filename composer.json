@@ -44,11 +44,11 @@
         "vendor/bin/parallel-lint --exclude vendor .",
         "# phpcs --version",
         "vendor/bin/phpcs --standard=PSR2 -nv --encoding=utf-8 --extensions=php lib/* tests/*",
-        "# vendor/bin/phpmd lib text ../iet-ou-QA/md/lax-rules.xml",
         "composer teardown",
-        "phpunit"
+        "vendor/bin/phpunit"
       ],
-      "unit": "vendor/bin/phpunit",
+      "unit": "composer teardown && vendor/bin/phpunit",
+      "phpmd": "vendor/bin/phpmd lib text ../iet-ou-QA/md/lax-rules.xml",
       "gunzip": [
         "file tests/fixtures/backup-moodle2-course-2-lorem2016--nu.mbz",
         "# cp -n tests/fixtures/backup-moodle2-course-2-lorem2016--nu.mbz tests/fixtures/backup-moodle2--nu.mbz.gz",

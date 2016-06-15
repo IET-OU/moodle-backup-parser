@@ -29,10 +29,14 @@ class ParserTest extends TestCaseExtended
     protected static $generator_options = [
         'section_is_on_course_home_page' => true,
         'simple_activity_link' => [ ],
-        'preg_replace_html' => [ ],
+        'preg_replace_html' => [
+            '/duo./' => '<a href="#">duo</a>.',
+        ],
         'font_icon_map' => [ ],
         'treat_as_page' => [ ],
-        'abbreviations' => [ ],
+        'abbreviations' => [
+            'vim' => 'Lively, energetic',
+        ],
     ];
     protected static $verbose = true; //false;
 
@@ -143,5 +147,9 @@ class ParserTest extends TestCaseExtended
         $this->assertRegexp("/id='sect-\d+'/", $index, 'html ID section');
         $this->assertRegExp('/mod-section/', $index, 'mod_section');
         $this->assertRegExp('/data-sid=["\']\d+["\']/', $index, 'data-sid');
+
+        $this->assertRegExp('/href="#">duo</', $html, 'preg_replace');
+        $this->assertRegexp('/href=".\/the-lorem-ipsum-principles"\sdata-uri="\$@FOLDERVIEWBYID\*6@\$">/', $html, 'URL');
+        $this->assertRegexp('/<abbr title=/', $html, 'abbr');
     }
 }
