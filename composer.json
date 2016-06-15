@@ -48,6 +48,7 @@
         "composer teardown",
         "phpunit"
       ],
+      "unit": "vendor/bin/phpunit",
       "gunzip": [
         "file tests/fixtures/backup-moodle2-course-2-lorem2016--nu.mbz",
         "# cp -n tests/fixtures/backup-moodle2-course-2-lorem2016--nu.mbz tests/fixtures/backup-moodle2--nu.mbz.gz",

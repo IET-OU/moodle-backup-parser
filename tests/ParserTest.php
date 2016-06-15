@@ -27,18 +27,23 @@ class ParserTest extends TestCaseExtended
         'title' => 'Is APPLAuD for me?',
     ];
     protected static $generator_options = [
+        'section_is_on_course_home_page' => true,
         'simple_activity_link' => [ ],
         'preg_replace_html' => [ ],
         'font_icon_map' => [ ],
         'treat_as_page' => [ ],
+        'abbreviations' => [ ],
     ];
-    protected static $verbose = false;
+    protected static $verbose = true; //false;
 
     public function setup()
     {
         // Arrange
         printf("Setup moodle-backup-parser. %s\n", '');
         $this->parser = new Parser();
+        if (self::$verbose) {
+            //$this->parser->setVerbose();
+        }
     }
 
     public function testInput()
@@ -97,14 +102,19 @@ class ParserTest extends TestCaseExtended
     {
         // Arrange
         $generator = new StaticPages();
+        if (self::$verbose) {
+            $generator->setVerbose();
+        }
 
         $this->parser->parse(TEST_INPUT_DIR);
         $activities = $this->parser->getActivities();
         $sections   = $this->parser->getSections();
         $metadata   = $this->parser->getMetaData();
+        $uri_refs   = $this->parser->getURIReferences();
 
         $generator->setOptions(self::$generator_options);
         $generator->setMetaData($metadata);
+        $generator->setURIReferences($uri_refs);
         $result = $generator->putContents(TEST_OUTPUT_DIR, $activities, $sections);
 
         printf("Handled activities:  %s\n", count($activities));

@@ -180,8 +180,8 @@ class StaticPages
         if (isset($this->options[ 'sideblock_section_id' ])
          && $this->options[ 'sideblock_section_id' ] === $section->id) {
             $this->sideblock_html = array_merge($this->sideblock_html, $section_html);
-        }
-        elseif ($section->is_on_course_home_page) {
+
+        } elseif ($section->is_on_course_home_page || $this->options[ 'section_is_on_course_home_page' ]) {
             $this->index_html = array_merge($this->index_html, $section_html);
         } else {
             // Section on a sub-page, or similar!
