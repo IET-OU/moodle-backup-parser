@@ -9,13 +9,18 @@
 
 class ObjectParser
 {
-    const LINK_REGEX = '/\$@(?P<type>[A-Z]+)\*(?P<id>\d+)@\$/';
+    const MBZ_URI_REGEX = '/\$@(?P<type>[A-Z]+)\*(?P<id>\d+)@\$/';
+    const HTTP_REGEX = '/(?P<uri>https?:\/\/[^"]+)/';
     const FILE_REGEX = '/(?P<attr>(src|href))="@@PLUGINFILE@@(?P<path>[^"]+)/';
 
     protected $input_dir;
     protected $uri_references = [];
+    protected $content_uris = [];
 
-    protected static $instance;
+    /**
+     * @var The *Singleton* instance.
+     */
+    private static $instance;
 
     public static function getInstance()
     {
@@ -23,6 +28,11 @@ class ObjectParser
             self::$instance = new ObjectParser();
         }
         return self::$instance;
+    }
+
+    private function __construct()
+    {
+        //noop.
     }
 
     public function setInputDir($input_dir)
@@ -79,33 +89,52 @@ class ObjectParser
         if (in_array($activity->modulename, [ 'page', 'folder', 'url' ])) {
             $key = sprintf('$@%sVIEWBYID*%d@$', strtoupper($activity->modulename), $activity->moduleid);
             $this->uri_references[ $key ] = $activity->filename;
+            if ('url' === $activity->modulename) {
+                $this->uri_references[ $key ] = $activity->externalurl;
+            }
         }
         return $activity;
     }
 
+    /**
+    * @return array  Get array of references to each parsed 'page', 'folder' & 'url'.
+    */
     public function getURIReferences()
     {
         return $this->uri_references;
     }
 
     /**
-     * PAGEVIEWBYID; URLVIEWBYID; FOLDERVIEWBYID; OUBLOGVIEW (..?)
-     * @return array
+    * @return array  Get array of URLs parsed from the content.
+    */
+    public function getContentURIs()
+    {
+        return $this->content_uris;
+    }
+
+    /**
+     * @return array Get array of MBZ archive URIs - PAGEVIEWBYID; URLVIEWBYID; FOLDERVIEWBYID; OUBLOGVIEW (..?)
      */
     protected function parseLinks($content)
     {
         $links = [];
-        if (preg_match_all(self::LINK_REGEX, $content, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all(self::MBZ_URI_REGEX, $content, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $links[ $match[ 'type' ] .'*'. $match[ 'id'] ] = $match[ 'id' ];
             }
         }
+
+        if (preg_match_all(self::HTTP_REGEX, $content, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $this->content_uris[] = $match[ 'uri' ];
+            }
+        }
+
         return $links;
     }
 
     /**
-     * Parse links to files and embedded images – @@PLUGINFILE@@/path to file.pdf | jpg
-     * @return array
+     * @return array Get array of parsed links to files and embedded images – @@PLUGINFILE@@/path to file.pdf | jpg
      */
     protected function parseFileLinks($content)
     {
