@@ -268,15 +268,16 @@ class StaticPages
 
     protected function putIndex()
     {
+        $opts = $this->options;
         if ($this->sections) {
             $index_html = implode("\n", $this->index_html);
         } else {
             $index_html = "\n<ul>\n" . implode("\n", $this->index_html) . "\n</ul>\n";
         }
-        $filename = $this->output_dir . '/' . 'index' . '.htm';
+        $filename = $this->output_dir . '/' . $opts[ 'index_file' ] . '.htm';
         $page = (object) [
             'name' => 'Home',  //Was: 'APPLAuD', 'Site map',
-            'url'  => $this->url(''),  //Was: 'index', 'site-map'.
+            'url'  => $this->url($opts[ 'index_url' ]),  //Was: 'index', 'site-map'.
             'content' => $index_html,
         ];
         $bytes = file_put_contents($filename, $this->html->staticHtml($page));
