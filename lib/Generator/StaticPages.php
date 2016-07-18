@@ -284,7 +284,7 @@ class StaticPages
         $filename = $this->output_dir . '/' . $this->opt('index_file', '-index') . '.htm';
         $page = (object) [
             'name' => 'Home',  //Was: 'APPLAuD', 'Site map',
-            'url'  => $this->url($this->opt('index_url', 'index' )),
+            'url'  => $this->url($this->opt('index_url', 'index')),
             'content' => $index_html,
         ];
         $bytes = file_put_contents($filename, $this->html->staticHtml($page));

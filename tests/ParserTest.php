@@ -27,7 +27,7 @@ class ParserTest extends TestCaseExtended
         'title' => 'Is APPLAuD for me?',
     ];
     protected static $generator_options = [
-        'index_file' => '-site-index',
+        'index_file' => '-index',
         'index_url'  => 'site-index',
         'section_is_on_course_home_page' => true,
         'simple_activity_link' => [ ],
@@ -133,10 +133,10 @@ class ParserTest extends TestCaseExtended
     protected function thenTestOutput()
     {
         $this->assertFileExists(TEST_OUTPUT_DIR . '/-static-pages.yaml');
-        $this->assertFileExists(TEST_OUTPUT_DIR . '/index.htm');
+        $this->assertFileExists(TEST_OUTPUT_DIR . '/-index.htm');
         $this->assertFileExists(TEST_OUTPUT_DIR . '/is-lorem-ipsum-for-me.htm'); # '/is-applaud-for-me.htm'
 
-        $index= file_get_contents(TEST_OUTPUT_DIR . '/index.htm');
+        $index= file_get_contents(TEST_OUTPUT_DIR . '/-index.htm');
         $html = file_get_contents(TEST_OUTPUT_DIR . '/is-lorem-ipsum-for-me.htm');
 
         $this->assertStringStartsWith('[viewBag]', $html);
