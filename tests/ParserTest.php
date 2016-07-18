@@ -27,6 +27,8 @@ class ParserTest extends TestCaseExtended
         'title' => 'Is APPLAuD for me?',
     ];
     protected static $generator_options = [
+        'index_file' => '-site-index',
+        'index_url'  => 'site-index',
         'section_is_on_course_home_page' => true,
         'simple_activity_link' => [ ],
         'preg_replace_html' => [

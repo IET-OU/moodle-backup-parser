@@ -15,6 +15,7 @@ class FilesParserTest extends \PHPUnit_Framework_TestCase
 {
     private $parser;
     private $generator;
+    protected static $generator_options = [ 'put_files_skip' => [] ];
 
     public function setup()
     {
@@ -22,6 +23,7 @@ class FilesParserTest extends \PHPUnit_Framework_TestCase
         printf("Setup moodle-backup-parser. %s\n", '');
         $this->parser = new Parser();
         $this->generator = new StaticPages();
+        $this->generator->setOptions(self::$generator_options);
     }
 
     public function testFiles()

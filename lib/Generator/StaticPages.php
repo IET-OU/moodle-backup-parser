@@ -191,12 +191,18 @@ class StaticPages
 
     public function putFiles($output_files_dir, $files_r)
     {
-        $count = 0;
+        $copy_count = $skip_count = 0;
+        $skip_files = [];
         foreach ($files_r as $file) {
-            $b_ok = copy($file->hashpath, $output_files_dir . '/' . $file->filename);
-            $count += (int) $b_ok;
+            if (in_array($file->filename, $this->options[ 'put_files_skip' ])) {
+                $skip_count++;
+                $skip_files[] = $file;
+            } else {
+                $b_ok = copy($file->hashpath, $output_files_dir . '/' . $file->filename);
+                $copy_count += (int) $b_ok;
+            }
         }
-        return $count;
+        return $copy_count;
     }
 
 
