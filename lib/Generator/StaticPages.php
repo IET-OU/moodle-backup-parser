@@ -40,7 +40,7 @@ class StaticPages
 
     public function opt($key, $default = null)
     {
-        return isset($this->options[ $key ]) $this->options[ $key ] : $default;
+        return isset($this->options[ $key ]) ? $this->options[ $key ] : $default;
     }
 
     public function setOptions($options)
@@ -172,7 +172,6 @@ class StaticPages
                     break;
             }
         }
-
         $this->putIndex();
 
         return $this->putYaml();
@@ -180,7 +179,7 @@ class StaticPages
 
     protected function assignSection($section, $section_html)
     {
-        if ($this->opt('sideblock_section_id'))
+        if ($this->opt('sideblock_section_id')
          && $this->opt('sideblock_section_id') === $section->id) {
             $this->sideblock_html = array_merge($this->sideblock_html, $section_html);
 
