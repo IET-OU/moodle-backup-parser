@@ -15,7 +15,10 @@ class FilesParserTest extends \PHPUnit_Framework_TestCase
 {
     private $parser;
     private $generator;
-    protected static $generator_options = [ 'put_files_skip' => [] ];
+    protected static $generator_options = [
+        'X_preg_replace_html' => [],
+        'put_files_skip' => [],
+    ];
 
     public function setup()
     {

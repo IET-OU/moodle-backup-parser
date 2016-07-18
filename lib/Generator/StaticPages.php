@@ -38,17 +38,20 @@ class StaticPages
         $this->verbose = true;
     }
 
+    public function opt($key, $default = null)
+    {
+        return isset($this->options[ $key ]) $this->options[ $key ] : $default;
+    }
+
     public function setOptions($options)
     {
         if ($this->isVerbose()) {
             printf("Set options: %s\n", json_encode($options, JSON_PRETTY_PRINT));
         }
         $this->options = $options;
-        $this->html->setReplacements($options[ 'preg_replace_html' ]);
-        $this->html->setIconMap($options[ 'font_icon_map' ]);
-        if (isset($options[ 'abbreviations' ])) {
-            $this->html->setAbbreviations($options[ 'abbreviations' ]);
-        }
+        $this->html->setReplacements($this->opt('preg_replace_html', []));
+        $this->html->setIconMap($this->opt('font_icon_map', []));
+        $this->html->setAbbreviations($this->opt('abbreviations', []));
     }
 
     public function setMetaData($metadata)
@@ -150,7 +153,7 @@ class StaticPages
 
     protected function switchExt($modname)
     {
-        $treat_as_page = $this->options[ 'treat_as_page' ];
+        $treat_as_page = $this->opt('treat_as_page');
         return in_array($modname, $treat_as_page) ? self::MOD_TREAT_AS_PAGE : $modname;
     }
 
@@ -177,11 +180,11 @@ class StaticPages
 
     protected function assignSection($section, $section_html)
     {
-        if (isset($this->options[ 'sideblock_section_id' ])
-         && $this->options[ 'sideblock_section_id' ] === $section->id) {
+        if ($this->opt('sideblock_section_id'))
+         && $this->opt('sideblock_section_id') === $section->id) {
             $this->sideblock_html = array_merge($this->sideblock_html, $section_html);
 
-        } elseif ($section->is_on_course_home_page || $this->options[ 'section_is_on_course_home_page' ]) {
+        } elseif ($section->is_on_course_home_page || $this->opt('section_is_on_course_home_page')) {
             $this->index_html = array_merge($this->index_html, $section_html);
         } else {
             // Section on a sub-page, or similar!
@@ -194,7 +197,7 @@ class StaticPages
         $copy_count = $skip_count = 0;
         $skip_files = [];
         foreach ($files_r as $file) {
-            if (in_array($file->filename, $this->options[ 'put_files_skip' ])) {
+            if (in_array($file->filename, $this->opt('put_files_skip', []))) {
                 $skip_count++;
                 $skip_files[] = $file;
             } else {
@@ -208,7 +211,7 @@ class StaticPages
 
     protected function trySimpleActivityLink($activity)
     {
-        $sa_config = $this->options[ 'simple_activity_link' ];
+        $sa_config = $this->opt('simple_activity_link');
         $modname = $activity->modulename;
         if (isset($sa_config[ $modname ])) {
             $url_format = $sa_config[ $modname ][ 'url' ];
@@ -274,16 +277,15 @@ class StaticPages
 
     protected function putIndex()
     {
-        $opts = $this->options;
         if ($this->sections) {
             $index_html = implode("\n", $this->index_html);
         } else {
             $index_html = "\n<ul>\n" . implode("\n", $this->index_html) . "\n</ul>\n";
         }
-        $filename = $this->output_dir . '/' . $opts[ 'index_file' ] . '.htm';
+        $filename = $this->output_dir . '/' . $this->opt('index_file', '-index') . '.htm';
         $page = (object) [
             'name' => 'Home',  //Was: 'APPLAuD', 'Site map',
-            'url'  => $this->url($opts[ 'index_url' ]),  //Was: 'index', 'site-map'.
+            'url'  => $this->url($this->opt('index_url', 'index' )),
             'content' => $index_html,
         ];
         $bytes = file_put_contents($filename, $this->html->staticHtml($page));
