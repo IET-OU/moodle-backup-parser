@@ -1,6 +1,6 @@
 {
     "name": "iet-ou/moodle-backup-parser",
-    "description": "Library to parse Moodle backup MBZ archives. Generate October static pages. Developed for APPLAuD. ©The Open University (IET).",
+    "description": "A library to parse Moodle backup MBZ archives. Generate October static pages. Developed for APPLAuD. ©The Open University (IET).",
     "homepage": "https://docs.moodle.org/29/en/Course_backup",
     "keywords": [ "Moodle", "archive", "zip", "course", "VLE", "October", "OpenUniversity", "IET-OU" ],
     "license": "proprietary",

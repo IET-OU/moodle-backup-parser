@@ -185,10 +185,41 @@ class StaticPages
 
         } elseif ($section->is_on_course_home_page || $this->opt('section_is_on_course_home_page')) {
             $this->index_html = array_merge($this->index_html, $section_html);
+
+            $bytes = $this->putSectionPage($section, $section_html);
+            /*if (isset($this->opt('sections_pages')[ 'sid:' . $section->id ])) {
+                $sec_page = (object) [
+                    'filename' => $this->opt('sections_pages')[ 'sid:' . $section->id ],
+                    'name' => $section->title,
+                    'content' => $section_html,
+                ];
+                $sec_page->url = $this->url($sec_page->filename);
+                $filename = $this->output_dir . '/' . $sec_page->filename . '.htm';
+                $bytes = file_put_contents($filename, $this->html->staticHtml($sec_page));
+            }*/
         } else {
             // Section on a sub-page, or similar!
             $this->other_html = array_merge($this->other_html, $section_html);
         }
+    }
+
+    protected function putSectionPage($section, $section_html)
+    {
+        $section_pages = $this->opt('section_pages');
+        if (isset($section_pages[ 'sid:' . $section->id ])) {
+            $sec_page = (object) [
+                'section_id'  => $section->id,
+                'modulename'  => 'section',
+                'filename' => $section_pages[ 'sid:' . $section->id ],
+                'name'  => $section->title,
+                'content' => implode('\n', $section_html),
+            ];
+            $sec_page->url = $this->url($sec_page->filename);
+            $filename = $this->output_dir . '/' . $sec_page->filename . '.htm';
+            $bytes = file_put_contents($filename, $this->html->staticHtml($sec_page));
+            return $bytes;
+        }
+        return null;
     }
 
     public function putFiles($output_files_dir, $files_r)
@@ -271,7 +302,7 @@ class StaticPages
 
     protected function url($filename)
     {
-        return $this->base . $filename;
+        return $this->base . preg_replace('/^\-/', '', $filename);
     }
 
     protected function putIndex()

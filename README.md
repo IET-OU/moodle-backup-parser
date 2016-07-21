@@ -2,7 +2,7 @@
 
 # IET-OU / moodle-backup-parser
 
-PHP library to parse files within a [Moodle][] course backup `MBZ` archive.
+A PHP library to parse files within a [Moodle][] course backup `MBZ` archive.
 Generate static pages compatible with [October][].
 
 * <https://docs.moodle.org/29/en/Course_backup>
@@ -20,7 +20,7 @@ Initial limitations:
 * `MBZ` archive file needs to be unzipped already;
 * Expecting the ['_newer_' backup format][faq] (`.tar.gz` as opposed to `.zip`)
 * Test source is Moodle _2.9.3—2.9.5_ (`Learn3.open.ac.uk`)
-* See [todo list][todos].
+* See [feature / todo list][todos].
 
 ## Installation
 
@@ -58,7 +58,7 @@ Install and test using Git and [Composer][],
 [Moodle]: https://moodle.org/
 [backup]: https://docs.moodle.org/29/en/Course_backup
 [faq]: https://docs.moodle.org/27/en/Backup_and_restore_FAQ#Using_the_new_backup_format_.28experimental.29
-[todos]: https://github.com/IET-OU/moodle-backup-parser/issues/1#issue-150009370
+[todos]: https://github.com/IET-OU/moodle-backup-parser/issues/1#issue-150009370 "Feature / todo list"
 [Composer]: https://getcomposer.org/
 [October]: http://octobercms.com/ "October CMS"
 [iet]: http://iet.open.ac.uk/

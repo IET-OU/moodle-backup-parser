@@ -18,6 +18,7 @@ class Clean
         $filename = str_replace('  -  ', '-', strtolower(trim($name)));
         $filename = str_replace(' - ', '-', $filename);
         $filename = str_replace(' ', '-', $filename);
+        $filename = str_replace('--', '-', $filename);
         $filename = preg_replace('/[^\w\-]/', '', $filename);
         return $filename;
     }
