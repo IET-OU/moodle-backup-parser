@@ -172,7 +172,7 @@ about
 </div>
 
 EOT;
-        if (false === strpos($page->url, 'sideblock') || (isset($page->filename) && false === strpos($page->filename, '-resources-')) ) {
+        if (false === strpos($page->url, 'sideblock') || (isset($page->filename) && false === strpos($page->filename, '_resources-'))) {
             $template .= <<<EOT
 <script id="mbp-pg-data" type="application/json">
 %json

@@ -212,7 +212,7 @@ class StaticPages
                 'modulename'  => 'section',
                 'filename' => $section_pages[ 'sid:' . $section->id ],
                 'name'  => $section->title,
-                'content' => implode('\n', $section_html),
+                'content' => implode("\n", $section_html),
             ];
             $sec_page->url = $this->url($sec_page->filename);
             $filename = $this->output_dir . '/' . $sec_page->filename . '.htm';
@@ -302,7 +302,7 @@ class StaticPages
 
     protected function url($filename)
     {
-        return $this->base . preg_replace('/^\-/', '', $filename);
+        return $this->base . preg_replace('/^[-_\.]/', '', $filename);
     }
 
     protected function putIndex()
@@ -343,7 +343,9 @@ class StaticPages
         $yml_post = ": { }\n\n#End.\n";
         $yml_join = ": { }\n    ";
 
-        $bytes = file_put_contents($filename, $yml_pre . implode($yml_join, $this->references) . $yml_post);
+        $references = array_merge($this->opt('section_pages', []), $this->references);
+
+        $bytes = file_put_contents($filename, $yml_pre . implode($yml_join, $references) . $yml_post);
         return $bytes;
     }
 }
