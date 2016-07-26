@@ -251,12 +251,22 @@ class StaticPages
         return null;
     }
 
+    /** Process "resources bank" page names,
+     * Eg. "Designing and Planning Learning Activities (A1)"
+     */
+    protected function processPageName($page_name)
+    {
+        $page_name = preg_replace('/(.+) \(([AKV]\d)\)$/', '<b>$2</b>$1', $page_name);
+        return $page_name;
+    }
+
     protected function putPageActivity($page)
     {
         $page->url = $this->url($page->filename);
         $filename = $this->output_dir . '/' . $page->filename . '.htm';
         $bytes = file_put_contents($filename, $this->html->staticHtml($page));
-        $index_html = Html::wrap($page, "<a href='.$page->url'>$page->name</a>");
+        $page_name = $this->processPageName($page->name);
+        $index_html = Html::wrap($page, "<a href='.$page->url'>$page_name</a>");
         $this->references[] = $page->filename;
 
         return $index_html;
