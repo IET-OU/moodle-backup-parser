@@ -16,7 +16,8 @@
     },
     "require": {
       "ext-simplexml": "*",
-      "php": ">=5.4.0"
+      "php": ">=5.4.0",
+      "symfony/yaml": "~2.0"
     },
     "require-dev": {
       "squizlabs/php_codesniffer": "2.5.1",

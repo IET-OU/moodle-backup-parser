@@ -7,7 +7,10 @@
  * @copyright © 2016 The Open University.
  */
 
+#use Symfony\Component\Yaml\Yaml;
+
 use Nfreear\MoodleBackupParser\Generator\Html;
+use Nfreear\MoodleBackupParser\Generator\StaticMenus;
 
 class StaticPages
 {
@@ -26,11 +29,14 @@ class StaticPages
     protected $other_html = [];
     protected $references = [];
 
+    protected $menu;
+
     protected $html;
 
     public function __construct()
     {
         $this->html = new Html();
+        $this->menu = new StaticMenus();
     }
 
     public function setVerbose()
@@ -143,6 +149,8 @@ class StaticPages
         $this->putIndex();
         $this->putSideblock();
 
+        $this->menu->putMenuYaml($this->output_dir);
+
         return $this->putYaml();
     }
 
@@ -201,6 +209,8 @@ class StaticPages
             // Section on a sub-page, or similar!
             $this->other_html = array_merge($this->other_html, $section_html);
         }
+
+        //$this->assignSectionMenu($section);
     }
 
     protected function putSectionPage($section, $section_html)
@@ -217,6 +227,9 @@ class StaticPages
             $sec_page->url = $this->url($sec_page->filename);
             $filename = $this->output_dir . '/' . $sec_page->filename . '.htm';
             $bytes = file_put_contents($filename, $this->html->staticHtml($sec_page));
+
+            $this->menu->assignSectionMenu($sec_page);
+
             return $bytes;
         }
         return null;
@@ -246,6 +259,9 @@ class StaticPages
         if (isset($sa_config[ $modname ])) {
             $url_format = $sa_config[ $modname ][ 'url' ];
             $url = sprintf($url_format, $activity->moduleid);
+
+            $this->menu->addMenuItem($activity);
+
             return Html::wrap($activity, "<a href='$url'>$activity->name</a>");
         }
         return null;
@@ -268,6 +284,8 @@ class StaticPages
         $page_name = $this->processPageName($page->name);
         $index_html = Html::wrap($page, "<a href='.$page->url'>$page_name</a>");
         $this->references[] = $page->filename;
+
+        $this->menu->addMenuItem($page);
 
         return $index_html;
     }
@@ -292,6 +310,8 @@ class StaticPages
         $index_html = Html::wrap($folder, "<a href='.$folder->url'>$folder->name</a>");
         $this->references[] = $folder->filename;
 
+        $this->menu->addMenuItem($folder);
+
         return $index_html;
     }
 
@@ -307,6 +327,9 @@ class StaticPages
         } else {
             $index_html = Html::wrap($url, "<a href='$url->resolve_url'>$url->name</a>");
         }
+
+        $this->menu->addMenuItem($url);
+
         return $index_html;
     }
 
