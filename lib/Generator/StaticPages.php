@@ -56,7 +56,7 @@ class StaticPages
         }
         $this->options = $options;
         $this->html->setReplacements($this->opt('preg_replace_html', []));
-        $this->html->setIconMap($this->opt('font_icon_map', []));
+        $this->html->setIconMap($this->opt('font_icon_map', []), null, $this->opt('font_icon_enable'));
         $this->html->setAbbreviations($this->opt('abbreviations', []));
     }
 

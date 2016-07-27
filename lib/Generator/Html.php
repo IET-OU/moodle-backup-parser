@@ -57,10 +57,10 @@ class Html
         return self::wrap($resource, "<a href='$pre/$file->filepath'>$icon$resource->name</a>", "ext-$ext", null, false);
     }
 
-    public function setIconMap($icon_map, $icon_html = self::ICON_HTML)
+    public function setIconMap($icon_map, $icon_html = null, $enable = false)
     {
-        self::$icons = $icon_map;
-        self::$icon_html = $icon_html;
+        self::$icons = $enable ? $icon_map : null;
+        self::$icon_html = $icon_html ? $icon_html : self::ICON_HTML;
     }
 
     public static function getResourceIcon($type)
