@@ -13,20 +13,25 @@ class StaticMenus
 {
     protected $menu_current = [];
     protected $menu = [];
+    protected $options = [];
+
+    public function setOptions($options)
+    {
+        $this->options = $options;
+    }
 
     public function assignSectionMenu($section)
     {
         $name = str_replace('_', '', $section->filename);
         foreach ($this->menu_current as $idx => $item) {
             $data = $item[ 'data' ];
-            if ('forumng' === $data->modulename) {
-                #var_dump('Forumng:', $data); exit;
-            }
             $menu_code = sprintf('stage_url:/%s, mid:%s, modname:%s', $name, $data->moduleid, $data->modulename);
             $this->menu_current[ $idx ][ 'code' ] = $menu_code;
             $this->menu_current[ $idx ][ 'type' ] = $this->menuItemType($data->modulename);
-            if ('url' === $this->menuItemType($data->modulename)) {
-                # Todo:
+            if ('forumng' === $data->modulename) {
+                $this->menu_current[ $idx ][ 'url' ] = '@forum@/' . $this->getActivityRef($data->moduleid) . '?id=' . $data->moduleid;
+            } elseif ('url' === $this->menuItemType($data->modulename)) {
+                $this->menu_current[ $idx ][ 'url' ] = '@url@/x?';
             }
             unset($this->menu_current[ $idx ][ 'data' ]);
         }
@@ -61,5 +66,15 @@ class StaticMenus
 
         $bytes = file_put_contents($filename, $yml_pre . $yaml);
         return $bytes;
+    }
+
+    protected function getActivityRef($moduleid)
+    {
+        if (! isset($this->options[ 'activity_refs' ])) {
+            return null;
+        }
+        $activity_refs = $this->options[ 'activity_refs' ];
+        $mid = 'mid:' . $moduleid;
+        return isset($activity_refs[ $mid ]) ? $activity_refs[ $mid ] : null;
     }
 }
