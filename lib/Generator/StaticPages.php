@@ -372,7 +372,8 @@ class StaticPages
         $filename = $this->output_dir . '/' . '-static-pages.yaml';
 
         $yml_pre = "# Auto-generated:  " . gmdate('c') .
-            "\n\nstatic-pages:\n    index: { }\n    ";
+            "\n\nstatic-pages:\n    ";
+        $yml_pre .= implode(": { }\n    ", $this->opt('static_pages_add', [])) . ": { }\n    ";
         $yml_post = ": { }\n\n#End.\n";
         $yml_join = ": { }\n    ";
 

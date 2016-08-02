@@ -19,14 +19,28 @@ class StaticMenus
         $name = str_replace('_', '', $section->filename);
         foreach ($this->menu_current as $idx => $item) {
             $data = $item[ 'data' ];
+            if ('forumng' === $data->modulename) {
+                #var_dump('Forumng:', $data); exit;
+            }
             $menu_code = sprintf('stage_url:/%s, mid:%s, modname:%s', $name, $data->moduleid, $data->modulename);
             $this->menu_current[ $idx ][ 'code' ] = $menu_code;
-            $this->menu_current[ $idx ][ 'type' ] = 'static-page';
+            $this->menu_current[ $idx ][ 'type' ] = $this->menuItemType($data->modulename);
+            if ('url' === $this->menuItemType($data->modulename)) {
+                # Todo:
+            }
             unset($this->menu_current[ $idx ][ 'data' ]);
         }
         //$this->menu[ $name ] = $this->menu_current;
         $this->menu = array_merge($this->menu, $this->menu_current);
         $this->menu_current = [];
+    }
+
+    protected function menuItemType($modname)
+    {
+        if (preg_match('/(url|forumng)/', $modname)) {
+            return 'url';
+        }
+        return 'static-page';
     }
 
     public function addMenuItem($obj)

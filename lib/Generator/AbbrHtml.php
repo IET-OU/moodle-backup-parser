@@ -16,7 +16,7 @@ class AbbrHtml
     {
         foreach ($abbr_array as $abbr => $definition) {
             $abbr = $preg_quote ? preg_quote($abbr) : $abbr;
-            $definition = htmlentities($definition);
+            $definition = htmlentities(preg_replace('/<.+?>/', '', $definition));
             self::$abbr[] = '/([>\s])(' . $abbr . ')([,;\?\.\s<&])/';
             self::$definitions[] = "$1<abbr title='$definition'>$2</abbr>$3";
         }
