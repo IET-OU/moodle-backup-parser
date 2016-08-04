@@ -14,6 +14,7 @@ class StaticMenus
     protected $menu_current = [];
     protected $menu = [];
     protected $menu_pages = [];
+    protected $menu_activities = [];
     protected $options = [];
 
     public function setOptions($options)
@@ -32,14 +33,14 @@ class StaticMenus
             if ('url embed' === $this->menuItemType($data)) {
                 $this->menu_current[ $idx ][ 'type' ] = 'static-page';
                 $this->menu_current[ $idx ][ 'reference' ] = $this->getActivityUrl($data);
-            }
-            elseif ('url' === $this->menuItemType($data)) {
+
+            } elseif ('url' === $this->menuItemType($data)) {
                 $this->menu_current[ $idx ][ 'url' ] = $this->getActivityUrl($data);
-            }
-            elseif ('cms-page' === $this->menuItemType($data)) {
+
+            } elseif ('cms-page' === $this->menuItemType($data)) {
                 $this->menu_current[ $idx ][ 'reference' ] = $this->getActivityUrl($data);
             }
-            $this->menu_current[ $idx ][ 'x_modname' ] = $data->modulename;
+            //Was: $this->menu_current[ $idx ][ 'x_modname' ] = $data->modulename;
             unset($this->menu_current[ $idx ][ 'data' ]);
         }
         $section_item[] = [
@@ -49,20 +50,23 @@ class StaticMenus
             'type'  => 'static-page',
         ];
         $this->assignMenuPages($section_item, $this->menu_current);
-        $this->menu = array_merge($this->menu, $section_item, $this->menu_current);
-        $this->menu_current = [];
-
     }
 
     protected function assignMenuPages($section_item, $menu_current)
     {
         $menu_pages_current = [];
+        $menu_activities_current = [];
         foreach ($this->menu_current as $idx => $item) {
             if (preg_match('/(cms|static)-page/', $item[ 'type' ])) {
                 $menu_pages_current[] = $item;
+            } else {
+                $menu_activities_current[] = $item;
             }
         }
+        $this->menu = array_merge($this->menu, $section_item, $this->menu_current);
         $this->menu_pages = array_merge($this->menu_pages, $section_item, $menu_pages_current);
+        $this->menu_activities = array_merge($this->menu_activities, $menu_activities_current);
+        $this->menu_current = [];
     }
 
     protected function menuItemType($data)
@@ -96,7 +100,8 @@ class StaticMenus
         ], 3);
 
         $bytes = file_put_contents($filename, $yml_pre . $yaml);
-        return $this->putMenuPagesYaml($output_dir);
+        $bytes = $this->putMenuPagesYaml($output_dir);
+        return $this->putMenuActivitiesYaml($output_dir);
     }
 
     protected function putMenuPagesYaml($output_dir)
@@ -108,6 +113,21 @@ class StaticMenus
         $yaml = \Symfony\Component\Yaml\Yaml::dump([
             'name'  => 'Stages Menu Pages',
             'items' => $this->menu_pages,
+        ], 3);
+
+        $bytes = file_put_contents($filename, $yml_pre . $yaml);
+        return $bytes;
+    }
+
+    protected function putMenuActivitiesYaml($output_dir)
+    {
+        $filename = $output_dir . '/' . '-activities-menu.yaml';
+
+        $yml_pre = "# Auto-generated:  " . gmdate('c') . "\n# Generator:  ". __CLASS__ . "\n";
+
+        $yaml = \Symfony\Component\Yaml\Yaml::dump([
+            'name'  => 'Activities Menu / useful links',
+            'items' => $this->menu_activities,
         ], 3);
 
         $bytes = file_put_contents($filename, $yml_pre . $yaml);
