@@ -27,23 +27,39 @@ class StaticMenus
             $data = $item[ 'data' ];
             $menu_code = sprintf('stage_url:/%s, mid:%s, modname:%s', $name, $data->moduleid, $data->modulename);
             $this->menu_current[ $idx ][ 'code' ] = $menu_code;
-            $this->menu_current[ $idx ][ 'type' ] = $this->menuItemType($data->modulename);
-            if ('forumng' === $data->modulename) {
-                $this->menu_current[ $idx ][ 'url' ] = '@forum@/' . $this->getActivityRef($data->moduleid) . '?id=' . $data->moduleid;
-            } elseif ('url' === $this->menuItemType($data->modulename)) {
-                $this->menu_current[ $idx ][ 'url' ] = '@url@/x?';
+            $this->menu_current[ $idx ][ 'type' ] = $this->menuItemType($data);
+            if ('url embed' === $this->menuItemType($data)) {
+                $this->menu_current[ $idx ][ 'type' ] = 'static-page';
+                $this->menu_current[ $idx ][ 'reference' ] = $this->getActivityUrl($data);
+            }
+            elseif ('url' === $this->menuItemType($data)) {
+                $this->menu_current[ $idx ][ 'url' ] = $this->getActivityUrl($data);
+            }
+            elseif ('cms-page' === $this->menuItemType($data)) {
+                $this->menu_current[ $idx ][ 'reference' ] = $this->getActivityUrl($data);
             }
             unset($this->menu_current[ $idx ][ 'data' ]);
         }
-        //$this->menu[ $name ] = $this->menu_current;
-        $this->menu = array_merge($this->menu, $this->menu_current);
+        $section_item[] = [
+            'title' => $section->name,
+            'reference' => $section->filename,
+            'code'  => 'sid:' . $section->section_id,
+            'type'  => 'static-page',
+        ];
+        $this->menu = array_merge($this->menu, $section_item, $this->menu_current);
         $this->menu_current = [];
     }
 
-    protected function menuItemType($modname)
+    protected function menuItemType($data)
     {
-        if (preg_match('/(url|forumng)/', $modname)) {
+        if ('url' === $data->modulename && $data->embed) {
+            return 'url embed';
+
+        } elseif (preg_match('/(url|forumng)/', $data->modulename)) {
             return 'url';
+
+        } elseif (preg_match('/(oublog|oucollaborate)/', $data->modulename)) {
+            return 'cms-page';
         }
         return 'static-page';
     }
@@ -66,6 +82,28 @@ class StaticMenus
 
         $bytes = file_put_contents($filename, $yml_pre . $yaml);
         return $bytes;
+    }
+
+    protected function getActivityUrl($data)
+    {
+        switch ($data->modulename) {
+            case 'forumng':
+                return '@forum@/' . $this->getActivityRef($data->moduleid) . '?mid=' . $data->moduleid;
+                break;
+            case 'url':
+                if ($data->embed) {
+                    return $data->filename;
+                } else {
+                    return $data->resolve_url;
+                }
+                break;
+            case 'oublog':
+                return 'private-journal';
+                break;
+            case 'oucollaborate':
+                return 'common-room';
+                break;
+        }
     }
 
     protected function getActivityRef($moduleid)
