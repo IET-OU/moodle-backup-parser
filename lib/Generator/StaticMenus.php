@@ -13,6 +13,7 @@ class StaticMenus
 {
     protected $menu_current = [];
     protected $menu = [];
+    protected $menu_pages = [];
     protected $options = [];
 
     public function setOptions($options)
@@ -38,6 +39,7 @@ class StaticMenus
             elseif ('cms-page' === $this->menuItemType($data)) {
                 $this->menu_current[ $idx ][ 'reference' ] = $this->getActivityUrl($data);
             }
+            $this->menu_current[ $idx ][ 'x_modname' ] = $data->modulename;
             unset($this->menu_current[ $idx ][ 'data' ]);
         }
         $section_item[] = [
@@ -46,8 +48,21 @@ class StaticMenus
             'code'  => 'sid:' . $section->section_id,
             'type'  => 'static-page',
         ];
+        $this->assignMenuPages($section_item, $this->menu_current);
         $this->menu = array_merge($this->menu, $section_item, $this->menu_current);
         $this->menu_current = [];
+
+    }
+
+    protected function assignMenuPages($section_item, $menu_current)
+    {
+        $menu_pages_current = [];
+        foreach ($this->menu_current as $idx => $item) {
+            if (preg_match('/(cms|static)-page/', $item[ 'type' ])) {
+                $menu_pages_current[] = $item;
+            }
+        }
+        $this->menu_pages = array_merge($this->menu_pages, $section_item, $menu_pages_current);
     }
 
     protected function menuItemType($data)
@@ -78,6 +93,21 @@ class StaticMenus
         $yaml = \Symfony\Component\Yaml\Yaml::dump([
             'name'  => 'Stages Menu Deep',
             'items' => $this->menu
+        ], 3);
+
+        $bytes = file_put_contents($filename, $yml_pre . $yaml);
+        return $this->putMenuPagesYaml($output_dir);
+    }
+
+    protected function putMenuPagesYaml($output_dir)
+    {
+        $filename = $output_dir . '/' . '-stages-menu-pages.yaml';
+
+        $yml_pre = "# Auto-generated:  " . gmdate('c') . "\n# Generator:  ". __CLASS__ . "\n";
+
+        $yaml = \Symfony\Component\Yaml\Yaml::dump([
+            'name'  => 'Stages Menu Pages',
+            'items' => $this->menu_pages,
         ], 3);
 
         $bytes = file_put_contents($filename, $yml_pre . $yaml);
