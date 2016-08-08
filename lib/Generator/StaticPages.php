@@ -226,9 +226,11 @@ class StaticPages
                 'content' => implode("\n", $section_html),
             ];
             $sec_page->url = $this->url($sec_page->filename);
-            $filename = $this->output_dir . '/' . $sec_page->filename . '.htm';
-            $bytes = file_put_contents($filename, $this->html->staticHtml($sec_page));
-
+            $bytes = false;
+            if ($this->opt('section_pages_write')) {
+                $filename = $this->output_dir . '/' . $sec_page->filename . '.htm';
+                $bytes = file_put_contents($filename, $this->html->staticHtml($sec_page));
+            }
             $this->menu->assignSectionMenu($sec_page);
 
             return $bytes;
