@@ -25,9 +25,13 @@ class StaticMenus
     public function assignSectionMenu($section)
     {
         $name = str_replace('_', '', $section->filename);
+        $sec_class = 'other';
+        if (preg_match('/Stage (\d)/i', $section->name, $matches)) {
+            $sec_class = 's' . $matches[ 1 ];
+        }
         foreach ($this->menu_current as $idx => $item) {
             $data = $item[ 'data' ];
-            $menu_code = sprintf('stage_url:/%s, mid:%s, modname:%s', $name, $data->moduleid, $data->modulename);
+            $menu_code = sprintf('cls:%s-sub sub, stage_url:/%s, mid:%s, modname:%s', $sec_class, $name, $data->moduleid, $data->modulename);
             $this->menu_current[ $idx ][ 'code' ] = $menu_code;
             $this->menu_current[ $idx ][ 'type' ] = $this->menuItemType($data);
             if ('url embed' === $this->menuItemType($data)) {
@@ -46,7 +50,7 @@ class StaticMenus
         $section_item[] = [
             'title' => $section->name,
             'reference' => $section->filename,
-            'code'  => 'sid:' . $section->section_id,
+            'code'  => sprintf('cls:%s stage, sid:%s', $sec_class, $section->section_id),
             'type'  => 'static-page',
         ];
         $this->assignMenuPages($section_item, $this->menu_current);
