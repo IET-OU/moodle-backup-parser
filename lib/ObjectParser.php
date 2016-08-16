@@ -16,6 +16,7 @@ class ObjectParser
     protected $input_dir;
     protected $uri_references = [];
     protected $content_uris = [];
+    protected $activity_rename = [];
 
     /**
      * @var The *Singleton* instance.
@@ -52,6 +53,26 @@ class ObjectParser
         return $xmlo;
     }
 
+    /** Was: 'setReplaceName'
+    */
+    public function setActivityRename($activity_rename)
+    {
+        $this->activity_rename = $activity_rename;
+    }
+
+    protected function activityRename($xmlo)
+    {
+        $replace_count = 0;
+        $replace = $this->activity_rename;
+        $name = preg_replace(array_keys($replace), array_values($replace), (string) $xmlo->name, $limit = -1, $replace_count);
+        #$name = preg_replace('/.*Why do I want to do this.*/', 'Explore how I want to do this', (string) $xmlo->name, $limit = -1, $replace_count);
+        return (object) [
+            'name' => $name,
+            'original_name' => $replace_count ? (string) $xmlo->name : null,
+            'is_replace_name' => (bool) $replace_count,
+        ];
+    }
+
     public function parseObject($dir, $modtype, $content = 'intro', $extra = [])
     {
         $xmlo = $this->loadXmlFile($dir, $modtype);
@@ -60,12 +81,18 @@ class ObjectParser
         $modname = (string) $xmlo[ 'modulename' ];
         $xmlo = $xmlo->{ $modtype };
 
+        $obj_name = $this->activityRename($xmlo);
+
+        #$replace_count = 0;
+        #$name = preg_replace('/.*Why do I want to do this.*/', 'Explore how I want to do this', (string) $xmlo->name, $limit = -1, $replace_count);
+
         $object = (object) [
             'id' => (int) $xmlo[ 'id' ],
             'moduleid' => $modid,
             'modulename' => $modname,
-            'name' => (string) $xmlo->name,
-            'filename' => Clean::filename((string) $xmlo->name),
+            'name' => (string) $obj_name->name,
+            'original_name' => $obj_name->original_name,
+            'filename' => Clean::filename($obj_name->name),
             'intro' => (string) $xmlo->intro,
             'content' => $content ? (string) html_entity_decode($xmlo->{ $content }) : null,
             'contentformat' => $content ? (int) $xmlo->{ $content . 'format' } : null,
@@ -73,6 +100,9 @@ class ObjectParser
             'links' => $this->parseLinks((string) $xmlo->{ $content }),
             'files' => $this->parseFileLinks((string) $xmlo->{ $content }),
         ];
+        #if ($replace_count) {
+        #    $object->original_name = (string) $xmlo->name;
+        #}
         foreach ($extra as $key) {
             $object->{ $key } = (string) $xmlo->{ $key };
         }

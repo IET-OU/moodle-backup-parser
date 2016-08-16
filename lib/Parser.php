@@ -42,6 +42,13 @@ class Parser
         $this->sections = new SectionsParser();
     }
 
+    public function setOptions($options)
+    {
+        if (isset($options->activity_rename)) {
+            $this->object->setActivityRename($options->activity_rename);
+        }
+    }
+
     /**
      * @param string Parse the MBZ contents of the input directory.
      * @return object Meta-data.
