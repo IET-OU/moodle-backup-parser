@@ -37,6 +37,10 @@ class FilesParser
         $files = [];
         $xmlo = simplexml_load_file($this->input_dir . self::FILES_XML_FILE);
         foreach ($xmlo->file as $file) {
+            if (preg_match('/Private files:/', $file->source)) {
+                printf("Skip private file: %s\n", $file->filename);
+                continue;
+            }
             if ('.' === (string) $file->filename) {
                 continue;
             }
