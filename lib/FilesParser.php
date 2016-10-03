@@ -53,6 +53,7 @@ class FilesParser
                 'fileext'  => preg_replace('/.+\./', '', (string) $file->filename),
                 'hashpath' => $this->input_dir . '/files/' . substr($hash, 0, 2) . '/' . $hash,
                 'mimetype' => (string) $file->mimetype,
+                'aptype'   => preg_match('/.+\.(docx?|pdf)/', $file->filename) ? 'document' : 'file',
                 'filesize' => (int) $file->filesize,
                 'timemodified' => gmdate('c', (int) $file->timemodified),
             ];

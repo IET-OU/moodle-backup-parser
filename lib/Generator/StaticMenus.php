@@ -169,4 +169,34 @@ class StaticMenus
         $mid = 'mid:' . $moduleid;
         return isset($activity_refs[ $mid ]) ? $activity_refs[ $mid ] : null;
     }
+
+    public function putMenuFilesYaml($output_dir, $files_menu)
+    {
+        $filename = $output_dir . '/' . '-files-menu.yaml';
+
+        ksort($files_menu, SORT_NATURAL);
+
+        foreach ($files_menu as $fid => $ff) {
+            $file = $ff[ 'obj' ];
+            $cls = sprintf('cls: %s %s, fid: %d, time: %s',
+                 $file->fileext, $file->aptype, $file->id, $file->timemodified); # 'cls' needs to come first!
+
+            $files_menu[ $fid ] = [
+                'title' => $file->filename,
+                'type'  => 'url',
+                'code'  => $cls,
+                'url'   => $file->filepath,
+            ];
+        }
+
+        $yml_pre = "# Auto-generated:  " . gmdate('c') . "\n# Generator:  ". __CLASS__ . "\n";
+
+        $yaml = \Symfony\Component\Yaml\Yaml::dump([
+            'name'  => 'Files Menu',
+            'items' => array_values($files_menu),
+        ], 3);
+
+        $bytes = file_put_contents($filename, $yml_pre . $yaml);
+        return $bytes;
+    }
 }

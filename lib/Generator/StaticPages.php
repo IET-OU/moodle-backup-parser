@@ -242,6 +242,8 @@ class StaticPages
     {
         $copy_count = $skip_count = 0;
         $skip_files = [];
+
+        $files_menu = [];
         foreach ($files_r as $file) {
             if (in_array($file->filename, $this->opt('put_files_skip', []))) {
                 $skip_count++;
@@ -249,8 +251,11 @@ class StaticPages
             } else {
                 $b_ok = copy($file->hashpath, $output_files_dir . '/' . $file->filename);
                 $copy_count += (int) $b_ok;
+
+                $files_menu[ $file->filename ] = [ 'obj' => $file ];
             }
         }
+        $bytes = $this->menu->putMenuFilesYaml($output_files_dir . '/..', $files_menu);
         return $copy_count;
     }
 
