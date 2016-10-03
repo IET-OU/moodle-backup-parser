@@ -178,8 +178,13 @@ class StaticMenus
 
         foreach ($files_menu as $fid => $ff) {
             $file = $ff[ 'obj' ];
-            $cls = sprintf('cls: %s %s, fid: %d, time: %s',
-                 $file->fileext, $file->aptype, $file->id, $file->timemodified); # 'cls' needs to come first!
+            $cls = sprintf(
+                'cls: %s %s, fid: %d, time: %s',  // 'cls' needs to come first!
+                $file->fileext,
+                $file->aptype,
+                $file->id,
+                $file->timemodified
+            );
 
             $files_menu[ $fid ] = [
                 'title' => $file->filename,
