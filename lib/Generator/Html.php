@@ -166,18 +166,20 @@ about
 {% put bodyid %}
 about
 {% endput %}
+
+%put_mbp_page_data
 ==
 <div id="mbp-pg-content" class="%className" data-uri="%url">
 %html
 </div>
 
 EOT;
-        if (false === strpos($page->url, 'sideblock') || (isset($page->filename) && false === strpos($page->filename, '_resources-'))) {
-            $template .= <<<EOT
-<script id="mbp-pg-data" type="application/json">
-%json
-</script>
 
+        $put_mbp_page_data = null;
+        if (false === strpos($page->url, 'sideblock') || (isset($page->filename) && false === strpos($page->filename, '_resources-'))) {
+            $json_ish = preg_replace([ '/^\{/', '/\}$/' ], '', json_encode($page, JSON_PRETTY_PRINT));
+            $put_mbp_page_data = <<<EOT
+{% put mbp_page_data %}$json_ish{% endput %}
 EOT;
         }
 
@@ -186,7 +188,8 @@ EOT;
             '%title'=> $page->name,
             '%url'  => $page->url,
             '%html' => $html,
-            '%json' => json_encode($page, JSON_PRETTY_PRINT),
+            //'%json' => json_encode($page, JSON_PRETTY_PRINT),
+            '%put_mbp_page_data' => $put_mbp_page_data,
         ]);
     }
 }
