@@ -20,9 +20,6 @@
       "symfony/yaml": "~2.0"
     },
     "require-dev": {
-      "squizlabs/php_codesniffer": "2.5.1",
-      "jakub-onderka/php-parallel-lint": "^0.9.2",
-      "phpmd/phpmd": "^2.4",
       "phpunit/phpunit": "~5.4"
     },
     "suggest": {
@@ -40,20 +37,7 @@
       }
     },
     "scripts": {
-      "test": [
-        "composer validate --no-interaction",
-        "vendor/bin/parallel-lint --exclude vendor .",
-        "# phpcs --version",
-        "vendor/bin/phpcs --standard=PSR2 -nv --encoding=utf-8 --extensions=php lib/* tests/*",
-        "composer teardown",
-        "vendor/bin/phpunit"
-      ],
-      "sub-test": [
-        "../../bin/parallel-lint .",
-        "../../bin/phpcs --standard=PSR2 -n --encoding=utf-8 --extensions=php lib/* tests/*"
-      ],
       "unit": "composer teardown && vendor/bin/phpunit",
-      "phpmd": "vendor/bin/phpmd lib text ../iet-ou-QA/md/lax-rules.xml",
       "gunzip": [
         "file tests/fixtures/backup-moodle2-course-2-lorem2016--nu.mbz",
         "# cp -n tests/fixtures/backup-moodle2-course-2-lorem2016--nu.mbz tests/fixtures/backup-moodle2--nu.mbz.gz",
@@ -68,9 +52,6 @@
         "egrep -rno '<[^>]+=\"\\$@[A-Z]+\\*.+?>.+?<.+?>' ../static_pages",
         "\n# Images & files\n",
         "egrep -rno '<[^>]+=\"@@[A-Z]+@@[^>]+>' ../static_pages"
-      ],
-      "fix": [
-        "phpcbf --standard=PSR2 -n --encoding=utf-8 --extensions=php lib/*"
       ]
     },
     "extra": {
